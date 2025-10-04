@@ -41,7 +41,7 @@ export default function Dashboard() {
   }, [email]);
 
   const addXp = async () => {
-    if (!email) return;
+    //if (!email) return;
     try {
       const res = await axios.post(`http://localhost:5000/user/${email}/add-xp`, { amount: 10 });
       setXp(res.data.xp);
