@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+<<<<<<< Updated upstream
 import { useNavigate } from "react-router-dom";
+=======
+import logo from "../assets/logo.png";
+import avatar from "../assets/avatarimage.jpg";
+import { Link } from 'react-router-dom';
+import Navbar from './Navbar';
+>>>>>>> Stashed changes
 
 export default function Dashboard() {
   const email = localStorage.getItem("email");
@@ -30,6 +37,14 @@ export default function Dashboard() {
     navigate("/login");
   };
 
+<<<<<<< Updated upstream
+=======
+const currentXP = 30;
+const nextLevelXP = 70;
+const xpProgress = (currentXP / nextLevelXP) * 100;
+
+  // Fetch XP from backend when dashboard loads
+>>>>>>> Stashed changes
   useEffect(() => {
     const fetchXp = async () => {
       if (!email) return;
@@ -56,6 +71,7 @@ export default function Dashboard() {
   };
 
   return (
+<<<<<<< Updated upstream
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Dashboard</h1>
       <p>Email: {email}</p>
@@ -67,6 +83,46 @@ export default function Dashboard() {
       <button onClick={goToLeaderboard}>Go to Leaderboard</button>
       <br /><br />
       <button onClick={handleLogout}>Log Out</button>
+=======
+    <div className = 'homepage-wrapper'>
+    <img src={logo} alt="ASLingo Logo" className="logo" />
+      <div className="homepage-container">
+      <div className="centered-top-text">
+        <h1>Your Dashboard</h1>
+      </div>
+      <Navbar />
+        <Link to="/" className="link-text">
+          Logout
+        </Link>
+      </div>
+    <div className="profile-container">
+      <div className="profile-card">
+        <div className="profile-left">
+          <img src={avatar} alt="Profile" className="profile-avatar" />
+          <h2 className="profile-name">Name</h2>
+        </div>
+
+        <div className="profile-right">
+          <div className="profile-section">
+            <h3>Gesture Rookie</h3>
+            <p><strong>Level 1</strong></p>
+            <div className="xp-bar">
+              <div className="xp-fill" style={{ width: `${xpProgress}%` }}></div>
+            </div>
+            <div className="xp-text">
+              <span>{currentXP} XP</span>
+              <span>{nextLevelXP} XP till next level</span>
+            </div>
+            <div className="link-text2">
+              <Link to="/Leaderboard" className="link-text2"> View Leaderboard Place
+              </Link>
+            </div>
+
+          </div>
+        </div>
+        </div>
+>>>>>>> Stashed changes
     </div>
+  </div>
   );
 }

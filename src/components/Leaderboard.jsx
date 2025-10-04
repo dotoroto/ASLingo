@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -63,3 +64,18 @@ export default function Leaderboard() {
     </div>
   );
 }
+=======
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import logo from "../assets/logo.png";
+
+export default function Leaderboard() {
+    const location = useLocation();
+return (
+    <div className = 'homepage-wrapper'>
+    <img src={logo} alt="ASLingo Logo" className="logo" />
+    </div>
+  );
+}
+
+>>>>>>> Stashed changes
