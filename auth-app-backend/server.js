@@ -1,83 +1,52 @@
 import express from "express";
-import mongoose from "mongoose";
+import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
-import { expressjwt } from "express-jwt";
-import jwks from "jwks-rsa";
-import User from "./models/User.js";
 
 dotenv.config();
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
+const DOMAIN = process.env.AUTH0_DOMAIN; // e.g. dev-xxxx.us.auth0.com
+const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
+const CONNECTION = process.env.AUTH0_DB_CONNECTION; // e.g., "Username-Password-Authentication"
 
-// Auth0 middleware
-const checkJwt = expressjwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
-  }),
-  audience: process.env.AUTH0_AUDIENCE,
-  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-  algorithms: ["RS256"],
-});
+// -------- Signup Endpoint --------
+app.post("/api/signup", async (req, res) => {
+  const { email, password } = req.body;
 
-// Public route
-app.get("/", (req, res) => {
-  res.send("Hello from backend 👋");
-});
-
-// Protected route
-app.get("/profile", checkJwt, (req, res) => {
-  res.json({
-    msg: "You are authorized!",
-    user: req.auth, // Auth0 user claims
-  });
-});
-
-
-// -------------------- USER ROUTES --------------------
-
-// Register user
-app.post("/api/register", async (req, res) => {
   try {
-    const { email, name } = req.body;
-
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ msg: "User already exists" });
-
-    // Create new user
-    user = new User({ email, name });
-    await user.save();
-
-    res.status(201).json({ msg: "User registered successfully", user });
+    const response = await axios.post(`https://${DOMAIN}/dbconnections/signup`, {
+      client_id: CLIENT_ID,
+      email,
+      password,
+      connection: CONNECTION,
+    });
+    res.json({ message: "Signup successful", data: response.data });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Server error" });
+    res.status(err.response?.status || 500).json(err.response?.data || err.message);
   }
 });
 
-// Get all users (for testing)
-app.get("/api/users", async (req, res) => {
+// -------- Login Endpoint --------
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const users = await User.find();
-    res.json(users);
+    const response = await axios.post(`https://${DOMAIN}/oauth/token`, {
+      grant_type: "http://auth0.com/oauth/grant-type/password-realm",
+      client_id: CLIENT_ID,
+      username: email,
+      password,
+      realm: CONNECTION,
+      scope: "openid profile email",
+    });
+    // Send tokens to frontend
+    res.json(response.data);
   } catch (err) {
-    res.status(500).json({ msg: "Server error" });
+    res.status(err.response?.status || 500).json(err.response?.data || err.message);
   }
 });
 
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(5000, () => console.log("Server running on port 5000"));

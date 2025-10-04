@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Homepage from "./components/Homepage.jsx";
 import Login from "./components/Login.jsx";
+import Signup from "./components/Signup.jsx";
+import Dashboard from "./components/Dashboard.jsx";
 
 export default function App() {
   return (
@@ -9,6 +11,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         {/* You can add a dashboard route later */}
       </Routes>
     </Router>
