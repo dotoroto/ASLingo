@@ -13,9 +13,7 @@ export default function Dashboard() {
     return storedXp ? parseInt(storedXp) : 0;
   });
 
-  const API_URL = process.env.NODE_ENV === "production"
-  ? "https://aslingo.study"
-  : "http://localhost:5000";
+  const API_URL = "https://aslingo.study";
 
 
   const handleLogout = () => {

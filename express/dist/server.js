@@ -11,7 +11,7 @@ const app = express();
 
 // CORS configuration to allow requests from frontend
 app.use(cors({
-  origin: 'https://aslingo.study/', // Your Vite dev server
+  origin: 'https://aslingo.study',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -25,7 +25,7 @@ const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
 const CONNECTION = process.env.AUTH0_DB_CONNECTION;*/
 
 // Connect to Mongo
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
