@@ -37,28 +37,21 @@ app.post("/api/signup", async (req, res) => {
       connection: CONNECTION
     });
 
-    // Create Mongo user
+    // Check if user exists in Mongo
     let user = await User.findOne({ email });
     if (!user) {
       user = new User({
         email,
         name: name || "",
-        xp: 0 // GUARANTEED
+        xp: 0,
       });
       await user.save();
-      console.log("New user saved with XP:", user);
-    } else {
-      // Ensure xp exists
-      if (user.xp === undefined) {
-        user.xp = 0;
-        await user.save();
-        console.log("Existing user updated with XP:", user);
-      }
+      console.log("New user saved with XP:", user.toObject());
     }
 
     res.json({ message: "Signup successful", data: auth0Res.data, user });
   } catch (err) {
-    console.error("Signup error:", err.response ? err.response.data : err);
+    console.error("Signup error:", err.response?.data || err);
     res.status(err.response?.status || 500)
        .json(err.response?.data || { error: "Signup failed" });
   }
@@ -81,20 +74,16 @@ app.post("/api/login", async (req, res) => {
 
     let user = await User.findOne({ email });
     if (!user) {
-      user = new User({ email, xp: 0, name: "" });
+      user = new User({ email, name: "" ,  xp: 0,});
       await user.save();
     }
 
     res.json({
       tokenData: auth0Res.data,
-      user: {
-        email: user.email,
-        xp: user.xp,
-        name: user.name
-      }
+      user: { email: user.email, xp: user.xp, name: user.name }
     });
   } catch (err) {
-    console.error("Login error full:", err.response ? err.response.data : err);
+    console.error("Login error full:", err.response?.data || err);
     res.status(err.response?.status || 500)
        .json(err.response?.data || { error: "Login failed" });
   }
@@ -120,7 +109,7 @@ app.post("/user/:email/add-xp", async (req, res) => {
     const user = await User.findOneAndUpdate(
       { email },
       { $inc: { xp: amount } },
-      { new: true }
+      { new: true, runValidators: true } // ensures xp updates properly
     );
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json({ xp: user.xp });
