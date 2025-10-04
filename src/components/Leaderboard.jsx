@@ -20,7 +20,7 @@ export default function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("${API_URL}/users");
+        const res = await axios.get(`${API_URL}/users`);
         // Sort users by XP descending
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
