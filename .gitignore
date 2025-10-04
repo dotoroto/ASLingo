@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 .venv/
-test_data/raw
+test_data/
+__pycache___
