@@ -1,25 +1,38 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
+import homebg from "../assets/homepagebg.png";
 
 export default function Homepage() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Welcome to ASLingo</h1>
-      <button
-        onClick={() => navigate("/login")}
-        style={{ marginRight: "10px", padding: "10px 20px" }}
-      >
-        Login
-      </button>
-      <button
-        onClick={() => navigate("/signup")}
-        style={{ padding: "10px 20px" }}
-      >
-        Sign Up
-      </button>
+    
+    <div
+      className="homepage-wrapper"
+      style={{
+        backgroundImage: `url(${homebg})`,
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        minHeight: "100vh"
+      }}
+    >
+    {/* Logo */}
+    <img src={logo} alt="ASLingo Logo" className="logo" />
+
+    {/* Centered buttons */}
+    <div className="homepage-container">
+      <div className="centered-title">
+        <h1>WANT TO LEARN ASL?</h1>
+      </div>
+      <div className="homepage-buttons">
+         <button className="frontpage-btn" onClick={() => navigate("/login")}>Login</button>
+         <button className="frontpage-btn" onClick={() => navigate("/signup")}>Sign Up</button>
+      </div>
     </div>
+  </div>
+
   );
 }
 
