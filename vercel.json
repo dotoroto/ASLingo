@@ -1,10 +1,6 @@
-{
-  "rewrites": [
-    {
-        "source": "(.*)/api", "destination": "/express/dist/server.js"
-    },
-    { 
-        "source": "(.*)", "destination": "/"
-    }
-  ]
+{"version": 2,
+"routes": [
+    {"src": "/api/(.*)", "dest": "api/index.js" },
+    {"handle": "filesystem" },
+    {"src": "/(.*)", "dest": "dist/index.html" }]
 }
