@@ -8,7 +8,15 @@ import User from "./models/User.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration to allow requests from frontend
+app.use(cors({
+  origin: 'http://localhost:5173', // Your Vite dev server
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 const DOMAIN = process.env.AUTH0_DOMAIN;
