@@ -3,7 +3,10 @@ import axios from "axios";
 
 export default function Dashboard() {
   const email = localStorage.getItem("email"); // ✅ use email, store this on login
-  const [xp, setXp] = useState(0);
+  const [xp, setXp] = useState(() => {
+  const storedXp = localStorage.getItem("xp");
+  return storedXp ? parseInt(storedXp) : 0;
+});
 
   // Fetch XP from backend when dashboard loads
   useEffect(() => {
@@ -12,6 +15,8 @@ export default function Dashboard() {
       try {
         const res = await axios.get(`http://localhost:5000/user/${email}`);
         setXp(res.data.xp);
+        localStorage.setItem("xp", res.data.xp);
+
       } catch (err) {
         console.error("Failed to fetch XP:", err.response?.data || err.message);
       }
@@ -23,9 +28,8 @@ export default function Dashboard() {
   const addXp = async () => {
     if (!email) return;
     try {
-      const res = await axios.post(`http://localhost:5000/user/${email}/add-xp`, {
-        amount: 10,
-      });
+      const res = await axios.post(`http://localhost:5000/user/${email}/add-xp`, { amount: 10 });
+      console.log(res.data); // should show { xp: newValue }
       setXp(res.data.xp);
       localStorage.setItem("xp", res.data.xp); // optional: keep local copy
     } catch (err) {

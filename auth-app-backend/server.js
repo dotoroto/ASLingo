@@ -2,86 +2,105 @@ import express from "express";
 import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
+import User from "./models/User.js";
 
 dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const DOMAIN = process.env.AUTH0_DOMAIN; // e.g. dev-xxxx.us.auth0.com
+const DOMAIN = process.env.AUTH0_DOMAIN;
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
 const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
-const CONNECTION = process.env.AUTH0_DB_CONNECTION; // e.g., "Username-Password-Authentication"
+const CONNECTION = process.env.AUTH0_DB_CONNECTION;
 
-// -------- Signup Endpoint --------
+// Connect to Mongo
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("Mongo connected"))
+.catch(err => console.error("Mongo connection error:", err));
+
+// -------- Signup --------
 app.post("/api/signup", async (req, res) => {
   const { email, password, name } = req.body;
 
   try {
-    // Register with Auth0
-    const response = await axios.post(`https://${DOMAIN}/dbconnections/signup`, {
+    // Auth0 signup
+    const auth0Res = await axios.post(`https://${DOMAIN}/dbconnections/signup`, {
       client_id: CLIENT_ID,
       email,
       password,
-      connection: CONNECTION,
+      connection: CONNECTION
     });
 
-    // Create local Mongo user
+    // Create Mongo user
     let user = await User.findOne({ email });
     if (!user) {
-      user = new User({ email, name, xp: 0 }); // start with xp=0
+      user = new User({
+        email,
+        name: name || "",
+        xp: 0 // GUARANTEED
+      });
       await user.save();
+      console.log("New user saved with XP:", user);
+    } else {
+      // Ensure xp exists
+      if (user.xp === undefined) {
+        user.xp = 0;
+        await user.save();
+        console.log("Existing user updated with XP:", user);
+      }
     }
 
-    res.json({ message: "Signup successful", data: response.data, user });
+    res.json({ message: "Signup successful", data: auth0Res.data, user });
   } catch (err) {
-    res.status(err.response?.status || 500).json(err.response?.data || { error: "Signup failed" });
+    console.error("Signup error:", err.response ? err.response.data : err);
+    res.status(err.response?.status || 500)
+       .json(err.response?.data || { error: "Signup failed" });
   }
 });
 
-
+// -------- Login --------
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Auth0 login
-    const response = await axios.post(`https://${DOMAIN}/oauth/token`, {
+    const auth0Res = await axios.post(`https://${DOMAIN}/oauth/token`, {
       grant_type: "http://auth0.com/oauth/grant-type/password-realm",
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       username: email,
       password,
       realm: CONNECTION,
-      scope: "openid profile email",
+      scope: "openid profile email"
     });
 
-    // Get user from Mongo
     let user = await User.findOne({ email });
     if (!user) {
-      user = new User({ email, xp: 0 });
+      user = new User({ email, xp: 0, name: "" });
       await user.save();
     }
 
-    // ✅ Return both token data and user info
     res.json({
-      tokenData: response.data, // JWT, etc.
+      tokenData: auth0Res.data,
       user: {
         email: user.email,
         xp: user.xp,
-        name: user.name,
-      },
+        name: user.name
+      }
     });
   } catch (err) {
-    res
-      .status(err.response?.status || 500)
-      .json(err.response?.data || { error: "Login failed" });
+    console.error("Login error full:", err.response ? err.response.data : err);
+    res.status(err.response?.status || 500)
+       .json(err.response?.data || { error: "Login failed" });
   }
 });
 
-
-app.listen(5000, () => console.log("Server running on port 5000"));
-
-
+// -------- Get User --------
 app.get("/user/:email", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
@@ -92,7 +111,7 @@ app.get("/user/:email", async (req, res) => {
   }
 });
 
-//add xp
+// -------- Add XP --------
 app.post("/user/:email/add-xp", async (req, res) => {
   const { email } = req.params;
   const { amount } = req.body;
@@ -103,13 +122,11 @@ app.post("/user/:email/add-xp", async (req, res) => {
       { $inc: { xp: amount } },
       { new: true }
     );
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
+    if (!user) return res.status(404).json({ error: "User not found" });
     res.json({ xp: user.xp });
   } catch (err) {
     res.status(500).json({ error: "Could not update XP" });
   }
 });
+
+app.listen(5000, () => console.log("Server running on port 5000"));
