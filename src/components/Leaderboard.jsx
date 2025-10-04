@@ -12,9 +12,7 @@ export default function Leaderboard() {
   const goToDashboard = () => {
     navigate("/dashboard");
   };
-   const API_URL = process.env.NODE_ENV === "production"
-  ? "https://aslingo.study"
-  : "http://localhost:5000";
+   const API_URL =  "https://aslingo.study";
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
