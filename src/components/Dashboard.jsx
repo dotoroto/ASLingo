@@ -9,10 +9,21 @@ export default function Dashboard() {
     return storedXp ? parseInt(storedXp) : 0;
   });
 
-  const navigate = useNavigate(); // <-- add this
+  const navigate = useNavigate();
 
   const goToLearning = () => {
-    navigate("/learning"); // navigate to Learning.jsx
+    navigate("/learning");
+  };
+  const goToLeaderboard = () => {
+    navigate("/leaderboard");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
+    localStorage.removeItem("xp");
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -48,6 +59,10 @@ export default function Dashboard() {
       <button onClick={addXp}>Gain 10 XP</button>
       <br /><br />
       <button onClick={goToLearning}>Go to Learning Page</button>
+      <br /><br />
+      <button onClick={goToLeaderboard}>Go to Leaderboard</button>
+      <br /><br />
+      <button onClick={handleLogout}>Log Out</button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Example words and reference video URLs
 const WORDS = [
@@ -16,6 +17,12 @@ export default function Learning() {
   const webcamRef = useRef(null);
 
   const currentWord = WORDS[currentIndex];
+
+  const navigate = useNavigate();
+  
+    const goToDashboard = () => {
+      navigate("/dashboard");
+    };
 
   // Start webcam
   useEffect(() => {
@@ -91,6 +98,7 @@ export default function Learning() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <button onClick={goToDashboard}>Dashboard</button>
       <h1>Learning: {currentWord.word}</h1>
 
       {/* Webcam */}
@@ -98,8 +106,8 @@ export default function Learning() {
         ref={webcamRef}
         autoPlay
         playsInline
-        width={400}
-        height={300}
+        width={700}
+        height={450}
         style={{ border: "2px solid black" }}
       ></video>
 

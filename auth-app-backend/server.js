@@ -100,6 +100,12 @@ app.get("/user/:email", async (req, res) => {
   }
 });
 
+app.get("/users", async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
+
+
 // -------- Add XP --------
 app.post("/user/:email/add-xp", async (req, res) => {
   const { email } = req.params;
