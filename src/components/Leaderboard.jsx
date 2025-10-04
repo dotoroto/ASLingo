@@ -14,12 +14,11 @@ export default function Leaderboard() {
   };
 
   // 👇 Use env variable so dev uses localhost, prod uses deployed backend
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("${API_URL}/users");
+        const res = await axios.get("https://aslingo.study/users");
         // Sort users by XP descending
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
@@ -34,7 +33,7 @@ export default function Leaderboard() {
     };
 
     fetchLeaderboard();
-  }, [API_URL]);
+  }, ["https://aslingo.study"]);
 
   if (loading) return <p>Loading leaderboard...</p>;
 

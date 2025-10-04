@@ -14,7 +14,6 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-<<<<<<< Updated upstream
       const res = await axios.post("https://aslingo.study/api/signup", {
         email,
         password,
@@ -33,10 +32,6 @@ export default function Signup() {
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
       navigate("/dashboard");
-=======
-      await axios.post("http://localhost:5000/api/signup", { email, password });
-      navigate("/login");
->>>>>>> Stashed changes
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Signup failed");
