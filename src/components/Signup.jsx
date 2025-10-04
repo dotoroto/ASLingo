@@ -3,17 +3,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import lgbg from "../assets/loginbg.png";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< Updated upstream
       const res = await axios.post("https://aslingo.study/api/signup", {
         email,
         password,
@@ -32,40 +33,38 @@ export default function Signup() {
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
       navigate("/dashboard");
+=======
+      await axios.post("http://localhost:5000/api/signup", { email, password });
+      navigate("/login");
+>>>>>>> Stashed changes
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
-      setError(err.response?.data?.description || "Signup failed");
+      setError(err.response?.data?.message || "Signup failed");
     }
   };
 
-  return (
-    <div
-      className="login-wrapper"
-      style={{
-        backgroundImage: `url(${lgbg})`,
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center"
-      }}
-    >
-      <form onSubmit={handleSignup} className="login-form">
-        <img src={logo} alt="ASLingo Logo" className="login-logo" />
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="login-input"
-        />
-        <input
+ return (
+     <div
+         className="login-wrapper"
+         style={{
+            backgroundImage: `url(${lgbg})`,
+            backgroundSize: "cover",        // makes image cover the whole container
+            backgroundRepeat: "no-repeat",  // prevents tiling
+            backgroundPosition: "center",   // centers the image
+        }}
+     >
+     <form onSubmit={handleSignup} className="login-form">
+       <img src={logo} alt="ASLingo Logo" className="login-logo" />
+       <Link to="/" className="link-text">Back to Home</Link>
+       <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           className="login-input"
-        />
+       />
+ 
         <input
           type="password"
           placeholder="Password"
@@ -73,10 +72,12 @@ export default function Signup() {
           onChange={(e) => setPassword(e.target.value)}
           required
           className="login-input"
-        />
-        <button type="submit" className="login-btn">Sign Up</button>
-        {error && <p className="login-error">{error}</p>}
-      </form>
-    </div>
-  );
-}
+       />
+ 
+       <button type="submit" className="login-btn">Sign Up</button>
+       {error && <p className="login-error">{error}</p>}
+     </form>
+     </div>
+   );
+ }
+ 
