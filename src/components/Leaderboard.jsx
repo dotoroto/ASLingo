@@ -1,7 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 
 export default function Leaderboard() {
   const [users, setUsers] = useState([]);
@@ -17,7 +18,7 @@ export default function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get(`${API_URL}/users`);
+        const res = await axios.get("${API_URL}/users");
         // Sort users by XP descending
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
@@ -35,7 +36,8 @@ export default function Leaderboard() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <button onClick={goToDashboard}>Dashboard</button>
+        <img src={logo} alt="ASLingo Logo" className="logo" />
+        <Link to="/dashboard" className="link-text">Back to Dashboard</Link>
       <h1>Leaderboard</h1>
       {users.length === 0 ? (
         <p>No users yet!</p>
@@ -62,4 +64,3 @@ export default function Leaderboard() {
     </div>
   );
 }
-

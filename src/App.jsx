@@ -4,8 +4,9 @@ import Homepage from "./components/Homepage.jsx";
 import Login from "./components/Login.jsx";
 import Signup from "./components/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
-import Learning from "./components/Learning.jsx";
 import Leaderboard from "./components/Leaderboard.jsx";
+import Lessons from "./components/Lessons.jsx";
+import Greetings from "./components/Greetings.jsx";
 
 export default function App() {
   return (
@@ -15,8 +16,9 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/learning" element={<Learning />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/lessons" element={<Lessons />} />
+        <Route path="/lessons/greetings" element={<Greetings />} />
       </Routes>
     </Router>
   );
