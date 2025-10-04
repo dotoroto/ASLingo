@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// Example words and reference video URLs
 const WORDS = [
   { word: "yes", videoUrl: "/videos/yes.mp4" },
   { word: "you", videoUrl: "/videos/you.mp4" },
@@ -15,24 +14,17 @@ export default function Learning() {
   const [confidence, setConfidence] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const webcamRef = useRef(null);
+  const navigate = useNavigate();
 
   const currentWord = WORDS[currentIndex];
+  const goToDashboard = () => navigate("/dashboard");
 
-  const navigate = useNavigate();
-  
-    const goToDashboard = () => {
-      navigate("/dashboard");
-    };
-
-  // Start webcam
   useEffect(() => {
     const startWebcam = async () => {
       if (navigator.mediaDevices.getUserMedia) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (webcamRef.current) {
-            webcamRef.current.srcObject = stream;
-          }
+          if (webcamRef.current) webcamRef.current.srcObject = stream;
         } catch (err) {
           console.error("Error accessing webcam:", err);
         }
@@ -41,11 +33,8 @@ export default function Learning() {
     startWebcam();
   }, []);
 
-  // Function to check AI model
   const checkGesture = async () => {
     if (!webcamRef.current) return;
-
-    // Capture current frame as image (optional: adjust size/format)
     const video = webcamRef.current;
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
@@ -55,85 +44,38 @@ export default function Learning() {
     const imageData = canvas.toDataURL("image/jpeg");
 
     try {
-      // Call your Python AI model
-      const res = await axios.post("http://localhost:5000/predict", {
-        image: imageData,
-        goalWord: currentWord.word,
-      });
-
-      const { topPrediction, confidence } = res.data; // e.g., { topPrediction: "yes", confidence: 0.82 }
-
+      const res = await axios.post("/api/predict", { image: imageData, goalWord: currentWord.word });
+      const { topPrediction, confidence } = res.data;
       setConfidence(confidence);
 
       if (confidence >= 0.8) {
         setSuggestion("");
-        goToNextWord();
+        setCurrentIndex((prev) => (prev + 1) % WORDS.length);
       } else {
-        // Call Gemini API for improvement suggestions
-        const geminiSuggestion = await getGeminiSuggestion(topPrediction, currentWord.word);
-        setSuggestion(geminiSuggestion);
+        const geminiRes = await axios.post("/api/gemini", {
+          prompt: `Predicted: ${topPrediction}, Goal: ${currentWord.word}`,
+        });
+        setSuggestion(geminiRes.data.answer);
       }
     } catch (err) {
       console.error("Error checking gesture:", err);
     }
   };
 
-  const goToNextWord = () => {
-    setCurrentIndex((prev) => (prev + 1) % WORDS.length);
-    setConfidence(0);
-    setSuggestion("");
-  };
-
-  // Stub for Gemini API call
-  const getGeminiSuggestion = async (predicted, goal) => {
-    // Example API call - replace with real Gemini integration
-    try {
-      const res = await axios.post("/gemini-suggest", { predicted, goal });
-      return res.data.suggestion;
-    } catch (err) {
-      console.error("Gemini API error:", err);
-      return "Try adjusting your hand shape and position.";
-    }
-  };
-
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
-        <button onClick={goToDashboard}>Dashboard</button>
+      <button onClick={goToDashboard}>Dashboard</button>
       <h1>Learning: {currentWord.word}</h1>
-
-      {/* Webcam */}
-      <video
-        ref={webcamRef}
-        autoPlay
-        playsInline
-        width={700}
-        height={450}
-        style={{ border: "2px solid black" }}
-      ></video>
-
+      <video ref={webcamRef} autoPlay playsInline width={700} height={450} style={{ border: "2px solid black" }} />
       <div style={{ marginTop: "10px" }}>
         <button onClick={checkGesture}>Check Gesture</button>
         <button onClick={() => setShowVideo((prev) => !prev)} style={{ marginLeft: "10px" }}>
           {showVideo ? "Hide" : "Show"} Reference Video
         </button>
       </div>
-
-      {/* Reference Video */}
-      {showVideo && (
-        <div style={{ marginTop: "10px" }}>
-          <video src={currentWord.videoUrl} controls width={300}></video>
-        </div>
-      )}
-
-      {/* Confidence */}
+      {showVideo && <video src={currentWord.videoUrl} controls width={300} style={{ marginTop: "10px" }} />}
       <p>Confidence: {(confidence * 100).toFixed(1)}%</p>
-
-      {/* Suggestions */}
-      {suggestion && (
-        <div style={{ marginTop: "20px", border: "1px solid gray", padding: "10px" }}>
-          <strong>Suggestion:</strong> {suggestion}
-        </div>
-      )}
+      {suggestion && <div style={{ marginTop: "20px", border: "1px solid gray", padding: "10px" }}><strong>Suggestion:</strong> {suggestion}</div>}
     </div>
   );
 }

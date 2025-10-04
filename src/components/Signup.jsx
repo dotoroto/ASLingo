@@ -14,27 +14,19 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/signup", {
-        email,
-        password,
-        name
-      });
+      const res = await axios.post("/api/signup", { email, password, name });
 
-      console.log("Signup successful!", res.data);
-
-      // Save user info & XP
       localStorage.setItem("email", res.data.user.email);
       localStorage.setItem("name", res.data.user.name);
       localStorage.setItem("xp", res.data.user.xp);
 
-      // Save tokens if returned
       if (res.data.data?.access_token) localStorage.setItem("access_token", res.data.data.access_token);
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
       navigate("/dashboard");
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
-      setError(err.response?.data?.description || "Signup failed");
+      setError(err.response?.data?.error || "Signup failed");
     }
   };
 
@@ -45,7 +37,7 @@ export default function Signup() {
         backgroundImage: `url(${lgbg})`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
       }}
     >
       <form onSubmit={handleSignup} className="login-form">

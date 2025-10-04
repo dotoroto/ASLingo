@@ -7,16 +7,12 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-
-  const goToDashboard = () => {
-    navigate("/dashboard");
-  };
+  const goToDashboard = () => navigate("/dashboard");
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/users");
-        // Sort users by XP descending
+        const res = await axios.get("/api/users");
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
         setLoading(false);
@@ -25,7 +21,6 @@ export default function Leaderboard() {
         setLoading(false);
       }
     };
-
     fetchLeaderboard();
   }, []);
 
@@ -33,7 +28,7 @@ export default function Leaderboard() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <button onClick={goToDashboard}>Dashboard</button>
+      <button onClick={goToDashboard}>Dashboard</button>
       <h1>Leaderboard</h1>
       {users.length === 0 ? (
         <p>No users yet!</p>

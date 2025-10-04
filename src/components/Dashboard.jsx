@@ -4,25 +4,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const email = localStorage.getItem("email");
-  const [xp, setXp] = useState(() => {
-    const storedXp = localStorage.getItem("xp");
-    return storedXp ? parseInt(storedXp) : 0;
-  });
-
+  const [xp, setXp] = useState(() => parseInt(localStorage.getItem("xp") || 0));
   const navigate = useNavigate();
 
-  const goToLearning = () => {
-    navigate("/learning");
-  };
-  const goToLeaderboard = () => {
-    navigate("/leaderboard");
-  };
+  const goToLearning = () => navigate("/learning");
+  const goToLeaderboard = () => navigate("/leaderboard");
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    localStorage.removeItem("name");
-    localStorage.removeItem("xp");
+    localStorage.clear();
     navigate("/login");
   };
 
@@ -30,7 +19,7 @@ export default function Dashboard() {
     const fetchXp = async () => {
       if (!email) return;
       try {
-        const res = await axios.get(`http://localhost:5000/user/${email}`);
+        const res = await axios.get(`/api/user/${email}`);
         setXp(res.data.xp);
         localStorage.setItem("xp", res.data.xp);
       } catch (err) {
@@ -43,7 +32,7 @@ export default function Dashboard() {
   const addXp = async () => {
     if (!email) return;
     try {
-      const res = await axios.post(`http://localhost:5000/user/${email}/add-xp`, { amount: 10 });
+      const res = await axios.post(`/api/user/${email}/add-xp`, { amount: 10 });
       setXp(res.data.xp);
       localStorage.setItem("xp", res.data.xp);
     } catch (err) {

@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -11,61 +12,53 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// === ENV Vars ===
-const DOMAIN = process.env.AUTH0_DOMAIN;
-const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
-const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
-const CONNECTION = process.env.AUTH0_DB_CONNECTION;
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ Mongo connected"))
+.catch(err => console.error("❌ Mongo error:", err));
 
-// === Mongo Connection ===
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => console.log("Mongo connected"))
-  .catch(err => console.error("Mongo connection error:", err));
+// --- Serve frontend static files ---
+app.use(express.static(path.join(process.cwd(), "dist")));
 
-// -------- Signup --------
+// --- API Routes ---
+// Signup
 app.post("/api/signup", async (req, res) => {
   const { email, password, name } = req.body;
-
   try {
-    const auth0Res = await axios.post(`https://${DOMAIN}/dbconnections/signup`, {
-      client_id: CLIENT_ID,
+    const auth0Res = await axios.post(`https://${process.env.AUTH0_DOMAIN}/dbconnections/signup`, {
+      client_id: process.env.AUTH0_CLIENT_ID,
       email,
       password,
-      connection: CONNECTION
+      connection: process.env.AUTH0_DB_CONNECTION
     });
 
     let user = await User.findOne({ email });
     if (!user) {
       user = new User({ email, name: name || "", xp: 0 });
       await user.save();
-      console.log("New user saved with XP:", user.toObject());
     }
 
     res.json({ message: "Signup successful", data: auth0Res.data, user });
   } catch (err) {
     console.error("Signup error:", err.response?.data || err);
-    res
-      .status(err.response?.status || 500)
-      .json(err.response?.data || { error: "Signup failed" });
+    res.status(err.response?.status || 500).json(err.response?.data || { error: "Signup failed" });
   }
 });
 
-// -------- Login --------
+// Login
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
-
   try {
-    const auth0Res = await axios.post(`https://${DOMAIN}/oauth/token`, {
+    const auth0Res = await axios.post(`https://${process.env.AUTH0_DOMAIN}/oauth/token`, {
       grant_type: "http://auth0.com/oauth/grant-type/password-realm",
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
+      client_id: process.env.AUTH0_CLIENT_ID,
+      client_secret: process.env.AUTH0_CLIENT_SECRET,
       username: email,
       password,
-      realm: CONNECTION,
+      realm: process.env.AUTH0_DB_CONNECTION,
       scope: "openid profile email"
     });
 
@@ -80,14 +73,12 @@ app.post("/api/login", async (req, res) => {
       user: { email: user.email, xp: user.xp, name: user.name }
     });
   } catch (err) {
-    console.error("Login error full:", err.response?.data || err);
-    res
-      .status(err.response?.status || 500)
-      .json(err.response?.data || { error: "Login failed" });
+    console.error("Login error:", err.response?.data || err);
+    res.status(err.response?.status || 500).json(err.response?.data || { error: "Login failed" });
   }
 });
 
-// -------- Get User --------
+// Get user
 app.get("/api/user/:email", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
@@ -98,22 +89,21 @@ app.get("/api/user/:email", async (req, res) => {
   }
 });
 
-// -------- Get All Users --------
+// Get all users
 app.get("/api/users", async (req, res) => {
   const users = await User.find();
   res.json(users);
 });
 
-// -------- Add XP --------
+// Add XP
 app.post("/api/user/:email/add-xp", async (req, res) => {
   const { email } = req.params;
   const { amount } = req.body;
-
   try {
     const user = await User.findOneAndUpdate(
       { email },
       { $inc: { xp: amount } },
-      { new: true, runValidators: true }
+      { new: true }
     );
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json({ xp: user.xp });
@@ -122,28 +112,19 @@ app.post("/api/user/:email/add-xp", async (req, res) => {
   }
 });
 
-// -------- Gemini API Proxy --------
+// Gemini API
 app.post("/api/gemini", async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) return res.status(400).json({ error: "Prompt required" });
 
   try {
     const geminiRes = await axios.post(
-      "https://api.openai.com/v1/responses", // Replace with Gemini if different
-      {
-        model: "gpt-5-mini",
-        input: prompt
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
+      "https://api.openai.com/v1/responses",
+      { model: "gpt-5-mini", input: prompt },
+      { headers: { Authorization: `Bearer ${process.env.GEMINI_API_KEY}`, "Content-Type": "application/json" } }
     );
 
-    const answer =
-      geminiRes.data.output?.[0]?.content?.[0]?.text || "No response";
+    const answer = geminiRes.data.output?.[0]?.content?.[0]?.text || "No response";
     res.json({ answer });
   } catch (err) {
     console.error("Gemini API error:", err.response?.data || err.message);
@@ -151,11 +132,10 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
-// === Export for Vercel ===
+// Catch-all: serve React for any other route
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "dist", "index.html"));
+});
+
+// Export app for Vercel
 export default app;
-
-// === Local dev only ===
-if (process.env.NODE_ENV !== "production") {
-  app.listen(5000, () => console.log("Server running on http://localhost:5000"));
-}
-
