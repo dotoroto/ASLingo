@@ -1,70 +1,58 @@
-// src/components/Login.jsx
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+const DOMAIN = "dev-0rs44np0zj70rnwz.us.auth0.com";
+const CLIENT_ID = "oSvrqa2TRwe4SBy58IehjFQbHfuMDTEE";
+const CONNECTION = "Username-Password-Authentication";
 
-  // Optional: Sync user with MongoDB when logged in
-  useEffect(() => {
-    const syncUser = async () => {
-      if (!isAuthenticated) return;
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-      const token = await getAccessTokenSilently();
-
-      const res = await fetch("http://localhost:4000/api/sync-user", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`https://${DOMAIN}/oauth/token`, {
+        grant_type: "password",
+        username: email,
+        password,
+        client_id: CLIENT_ID,
+        scope: "openid profile email",
+        connection: CONNECTION,
       });
-
-      const data = await res.json();
-      console.log("Synced user:", data);
-    };
-
-    syncUser();
-  }, [isAuthenticated, getAccessTokenSilently]);
-
-  if (isLoading) {
-    return <h2>Loading...</h2>;
-  }
+      console.log("Logged in!", res.data);
+      // Save tokens locally, then redirect to dashboard/home
+      localStorage.setItem("id_token", res.data.id_token);
+      navigate("/dashboard"); 
+    } catch (err) {
+      console.error("Login failed:", err.response?.data || err.message);
+    }
+  };
 
   return (
-    <div className="app">
-      <h1>ASLingo</h1>
-
-      {!isAuthenticated ? (
-        <>
-          <button onClick={() => loginWithRedirect()}>Log In</button>
-          <button
-            onClick={() =>
-              loginWithRedirect({
-                authorizationParams: {
-                  screen_hint: "signup",
-                },
-              })
-            }
-          >
-            Sign Up
-          </button>
-        </>
-      ) : (
-        <>
-          <p>Welcome, {user?.name}!</p>
-          <img src={user?.picture} alt={user?.name} style={{ borderRadius: "50px" }} />
-          <button
-            onClick={() =>
-              logout({ logoutParams: { returnTo: window.location.origin } })
-            }
-          >
-            Log Out
-          </button>
-        </>
-      )}
-    </div>
+    <form onSubmit={handleLogin} style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+        required
+      />
+      <button type="submit" style={{ padding: "10px 20px" }}>Login</button>
+    </form>
   );
 }
 
-export default Login;
+
