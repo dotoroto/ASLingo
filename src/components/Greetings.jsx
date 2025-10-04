@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
+import logo from "../assets/logo.png";
 
 const BACKEND_PREDICT = "http://localhost:8000/predict";
 const BACKEND_RESET   = "http://localhost:8000/reset";
@@ -184,8 +187,16 @@ useEffect(() => {
     "#dc2626";                                // red-600
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <button onClick={goToDashboard}>Dashboard</button>
+     <div className = 'homepage-wrapper'>
+        <img src={logo} alt="ASLingo Logo" className="logo" />
+          <div className="homepage-container">
+          <div className="centered-top-text">
+            <h1>Your Dashboard</h1>
+          </div>
+      <Navbar />
+      <Link to="/" className="link-text">
+                Logout
+      </Link>
       <h1>Learning: {currentWord.word}</h1>
 
       {/* CHANGED: video now has live overlays for prediction + state */}
@@ -263,5 +274,6 @@ useEffect(() => {
         </div>
       )}
     </div>
+  </div>
   );
 }

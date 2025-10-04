@@ -5,7 +5,6 @@ import avatar from "../assets/avatarimage.jpg";
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
-
 export default function Dashboard() {
   const email = localStorage.getItem("email");
   const [xp, setXp] = useState(() => {
@@ -13,14 +12,25 @@ export default function Dashboard() {
     return storedXp ? parseInt(storedXp) : 0;
   });
 
-  const API_URL = "https://aslingo.study";
+  const API_URL = process.env.NODE_ENV === "production"
+  ? "https://aslingo.study"
+  : "http://localhost:5000";
 
+  const navigate = useNavigate();
+
+  const goToLearning = () => {
+    navigate("/learning");
+  };
+  const goToLeaderboard = () => {
+    navigate("/leaderboard");
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
     localStorage.removeItem("xp");
+    navigate("/login");
   };
 
 const currentXP = 30;
@@ -28,7 +38,6 @@ const nextLevelXP = 70;
 const xpProgress = (currentXP / nextLevelXP) * 100;
 
   // Fetch XP from backend when dashboard loads
-
   useEffect(() => {
     const fetchXp = async () => {
       if (!email) return;
@@ -92,25 +101,7 @@ const xpProgress = (currentXP / nextLevelXP) * 100;
           </div>
         </div>
         </div>
-
     </div>
   </div>
   );
 }
-
-/*
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Dashboard</h1>
-      <p>Email: {email}</p>
-      <p>XP: {xp}</p>
-      <button onClick={addXp}>Gain 10 XP</button>
-      <br /><br />
-      <button onClick={goToLearning}>Go to Learning Page</button>
-      <br /><br />
-      <button onClick={goToLeaderboard}>Go to Leaderboard</button>
-      <br /><br />
-      <button onClick={handleLogout}>Log Out</button>
-
-      * */
