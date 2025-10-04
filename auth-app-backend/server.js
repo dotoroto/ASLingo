@@ -10,6 +10,7 @@ app.use(express.json());
 
 const DOMAIN = process.env.AUTH0_DOMAIN; // e.g. dev-xxxx.us.auth0.com
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
+const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
 const CONNECTION = process.env.AUTH0_DB_CONNECTION; // e.g., "Username-Password-Authentication"
 
 // -------- Signup Endpoint --------
@@ -25,7 +26,9 @@ app.post("/api/signup", async (req, res) => {
     });
     res.json({ message: "Signup successful", data: response.data });
   } catch (err) {
-    res.status(err.response?.status || 500).json(err.response?.data || err.message);
+    res
+      .status(err.response?.status || 500)
+      .json(err.response?.data || { error: "Signup failed" });
   }
 });
 
@@ -37,15 +40,19 @@ app.post("/api/login", async (req, res) => {
     const response = await axios.post(`https://${DOMAIN}/oauth/token`, {
       grant_type: "http://auth0.com/oauth/grant-type/password-realm",
       client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET, // ✅ add client_secret here
       username: email,
       password,
       realm: CONNECTION,
       scope: "openid profile email",
     });
-    // Send tokens to frontend
+
+    // Send tokens back to frontend
     res.json(response.data);
   } catch (err) {
-    res.status(err.response?.status || 500).json(err.response?.data || err.message);
+    res
+      .status(err.response?.status || 500)
+      .json(err.response?.data || { error: "Login failed" });
   }
 });
 
