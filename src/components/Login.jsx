@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
+import lgbg from "../assets/loginbg.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -32,26 +34,38 @@ export default function Login() {
 
 
   return (
-    <form onSubmit={handleLogin} style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Login</h2>
+    <div
+        className="login-wrapper"
+        style={{
+           backgroundImage: `url(${lgbg})`,
+           backgroundSize: "cover",        // makes image cover the whole container
+           backgroundRepeat: "no-repeat",  // prevents tiling
+           backgroundPosition: "center",   // centers the image
+       }}
+    >
+    <form onSubmit={handleLogin} className="login-form">
+      <img src={logo} alt="ASLingo Logo" className="logo-middle" />
       <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+         type="email"
+         placeholder="Email"
+         value={email}
+         onChange={(e) => setEmail(e.target.value)}
+         required
+         className="login-input"
       />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        style={{ display: "block", margin: "10px auto", padding: "10px" }}
+
+       <input
+         type="password"
+         placeholder="Password"
+         value={password}
+         onChange={(e) => setPassword(e.target.value)}
+         required
+         className="login-input"
       />
-      <button type="submit" style={{ padding: "10px 20px" }}>Login</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <button type="submit" className="login-btn">Login</button>
+      {error && <p className="login-error">{error}</p>}
     </form>
+    </div>
   );
 }
