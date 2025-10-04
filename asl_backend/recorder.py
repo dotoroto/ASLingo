@@ -9,13 +9,17 @@ model = DummyModel()
 # Suppose you've pre-trained a classifier `model` that maps landmarks → sign label
 
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_confidence=0.7)
+hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.7, min_tracking_confidence=0.7)
 mp_draw = mp.solutions.drawing_utils
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
+cap.release()
+cv2.destroyAllWindows()
+
+cap = cv2.VideoCapture(0)
 
 data = []
-label = "thumbs up"  # change this each time you record a new sign
+label = "name_40"  # change this each time you record a new sign
 
 print("Collecting data for:", label)
 
@@ -62,4 +66,4 @@ cap.release()
 cv2.destroyAllWindows()
 
 df = pd.DataFrame(data)
-df.to_csv(f"{label}_data.csv", index=False)
+df.to_csv(f"test_data/raw/{label}data.csv", index=False)
