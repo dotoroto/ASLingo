@@ -7,10 +7,10 @@ import joblib
 import torch.nn.functional as F
 
 # -------- Settings --------
-MAX_FRAMES = 30
+MAX_FRAMES = 40
 NUM_FEATURES = 63
 TRIM_FIRST_FRAMES = 5  # number of frames to remove at start
-CONFIDENCE_THRESHOLD = 0.6  # minimum confidence to display prediction
+CONFIDENCE_THRESHOLD = 0.4  # Lower threshold to catch "Hello" better
 
 # -------- LSTM Model --------
 class TinyLSTMModel(torch.nn.Module):
@@ -119,6 +119,17 @@ while True:
     cv2.putText(frame, buffer_status, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     if results.multi_hand_landmarks:
+        # Draw ALL detected hands
+        for hand_landmarks in results.multi_hand_landmarks:
+            mp_draw.draw_landmarks(
+                frame, 
+                hand_landmarks, 
+                mp_hands.HAND_CONNECTIONS,
+                mp_draw.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
+                mp_draw.DrawingSpec(color=(255, 255, 255), thickness=2)
+            )
+        
+        # Use first hand for prediction
         hand = results.multi_hand_landmarks[0]
         
         # Extract landmarks
@@ -126,15 +137,6 @@ while True:
         for lm in hand.landmark:
             coords.extend([lm.x, lm.y, lm.z])
         frame_buffer.append(coords)
-        
-        # Draw hand landmarks
-        mp_draw.draw_landmarks(
-            frame, 
-            hand, 
-            mp_hands.HAND_CONNECTIONS,
-            mp_draw.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
-            mp_draw.DrawingSpec(color=(255, 255, 255), thickness=2)
-        )
 
         # Make prediction when buffer is full
         if len(frame_buffer) == MAX_FRAMES:

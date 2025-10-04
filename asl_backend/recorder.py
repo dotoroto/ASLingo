@@ -19,7 +19,7 @@ cv2.destroyAllWindows()
 cap = cv2.VideoCapture(0)
 
 data = []
-label = "hello_10"  # change this each time you record a new sign
+label = "name_40"  # change this each time you record a new sign
 
 print("Collecting data for:", label)
 

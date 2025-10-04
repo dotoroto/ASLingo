@@ -33,7 +33,7 @@ X = []
 y = []
 
 # Predefined gesture label mapping
-gesture_labels = {"hello": 0, "yes": 1, "you": 2}
+gesture_labels = {"hello": 0, "yes": 1, "you": 2, "sorry": 3, "name": 4}
 
 print("="*60)
 print("PREPROCESSING ASL GESTURE DATA")
