@@ -13,7 +13,7 @@ export default function Login() {
   const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const res = await axios.post("http://localhost:5000/api/login", { email, password });
+    const res = await axios.post("https://aslingo.study/api/login", { email, password });
     console.log("Logged in!", res.data);
 
     if (!res.data.user) {

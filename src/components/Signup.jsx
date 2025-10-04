@@ -14,7 +14,7 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/signup", {
+      const res = await axios.post("https://aslingo.study/api/signup", {
         email,
         password,
         name
