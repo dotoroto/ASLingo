@@ -26,6 +26,8 @@ export default function Login() {
       if (res.data.id_token) {
         localStorage.setItem("id_token", res.data.id_token);
       }
+      localStorage.setItem("email", res.data.user.email);
+      localStorage.setItem("xp", res.data.user.xp);
 
       navigate("/dashboard");
     } catch (err) {
