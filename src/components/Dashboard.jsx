@@ -9,6 +9,10 @@ export default function Dashboard() {
     return storedXp ? parseInt(storedXp) : 0;
   });
 
+  const API_URL = process.env.NODE_ENV === "production"
+  ? "https://aslingo.study"
+  : "http://localhost:5000";
+
   const navigate = useNavigate();
 
   const goToLearning = () => {
@@ -30,7 +34,7 @@ export default function Dashboard() {
     const fetchXp = async () => {
       if (!email) return;
       try {
-        const res = await axios.get(`http://localhost:5000/user/${email}`);
+        const res = await axios.get(`${API_URL}/user/${email}`);
         setXp(res.data.xp);
         localStorage.setItem("xp", res.data.xp);
       } catch (err) {
@@ -43,7 +47,7 @@ export default function Dashboard() {
   const addXp = async () => {
     //if (!email) return;
     try {
-      const res = await axios.post(`http://localhost:5000/user/${email}/add-xp`, { amount: 10 });
+      const res = await axios.post(`${API_URL}/user/${email}/add-xp`, { amount: 10 });
       setXp(res.data.xp);
       localStorage.setItem("xp", res.data.xp);
     } catch (err) {

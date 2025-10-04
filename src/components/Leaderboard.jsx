@@ -11,11 +11,14 @@ export default function Leaderboard() {
   const goToDashboard = () => {
     navigate("/dashboard");
   };
+   const API_URL = process.env.NODE_ENV === "production"
+  ? "https://aslingo.study"
+  : "http://localhost:5000";
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/users");
+        const res = await axios.get("${API_URL}/users");
         // Sort users by XP descending
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
