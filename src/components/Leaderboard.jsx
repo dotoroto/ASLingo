@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -65,6 +66,8 @@ export default function Leaderboard() {
   );
 }
 =======
+=======
+>>>>>>> Stashed changes
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from "../assets/logo.png";
@@ -78,4 +81,7 @@ return (
   );
 }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes

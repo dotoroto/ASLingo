@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { useNavigate } from "react-router-dom";
 =======
+=======
+>>>>>>> Stashed changes
 import logo from "../assets/logo.png";
 import avatar from "../assets/avatarimage.jpg";
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 export default function Dashboard() {
@@ -43,6 +49,10 @@ const currentXP = 30;
 const nextLevelXP = 70;
 const xpProgress = (currentXP / nextLevelXP) * 100;
 
+const currentXP = 30;
+const nextLevelXP = 70;
+const xpProgress = (currentXP / nextLevelXP) * 100;
+
   // Fetch XP from backend when dashboard loads
 >>>>>>> Stashed changes
   useEffect(() => {
@@ -72,6 +82,7 @@ const xpProgress = (currentXP / nextLevelXP) * 100;
 
   return (
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Dashboard</h1>
       <p>Email: {email}</p>
@@ -84,6 +95,8 @@ const xpProgress = (currentXP / nextLevelXP) * 100;
       <br /><br />
       <button onClick={handleLogout}>Log Out</button>
 =======
+=======
+>>>>>>> Stashed changes
     <div className = 'homepage-wrapper'>
     <img src={logo} alt="ASLingo Logo" className="logo" />
       <div className="homepage-container">
@@ -121,6 +134,9 @@ const xpProgress = (currentXP / nextLevelXP) * 100;
           </div>
         </div>
         </div>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </div>
   </div>
