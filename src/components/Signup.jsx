@@ -9,6 +9,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -60,7 +61,15 @@ export default function Signup() {
           required
           className="login-input"
        />
- 
+       <input
+          type="text"
+          placeholder="Name"
+          value={name}
+           onChange={(e) => setName(e.target.value)}
+          required
+          className="login-input"
+        />
+
         <input
           type="password"
           placeholder="Password"
