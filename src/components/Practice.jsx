@@ -55,14 +55,14 @@ export default function Practice() {
        <div className="nav-arrow" onClick={handlePrevious}>&lt;</div>
       
         <div className="cards-wrapper">
-          {visibleCards.map((lesson, index) => (
+          {visibleCards.map((words, index) => (
             <div
-              key={`${lesson}-${currentIndex}-${index}`}
+              key={`${words}-${currentIndex}-${index}`}
               className={`lesson-card ${isAnimating ? 'slide-in' : ''}`}
-              onClick={() => navigate(`/words/${lesson.toLowerCase().replace(/\s+/g, '-')}`)}
+              onClick={() => navigate(`/words/${words.toLowerCase().replace(/\s+/g, '-')}`)}
               style={{ cursor: 'pointer' }}
             >
-              <span>{lesson}</span>
+              <span>{words}</span>
             </div>
           ))}
         </div>
