@@ -3,8 +3,6 @@ import axios from "axios";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import logo from "../assets/logo.png";
-import { Link } from 'react-router-dom';
-
 const BACKEND_PREDICT = "http://localhost:8000/predict";
 const BACKEND_RESET = "http://localhost:8000/reset";
 
