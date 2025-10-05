@@ -24,6 +24,13 @@ body {
   margin: 0;
 }
 
+.content_wrapper{
+  position: relative;
+  align-items: center;
+  height: 80vh;
+  width: 100vw
+}
+
 .logo {
   position: absolute;
   top: 15px;

@@ -43,7 +43,8 @@ export default function LessonDetail() {
             <Link to="/" className="link-text">Logout</Link>
         </div>
 
-        
+        <div className="content_wrapper">
+
         <h1>Lesson: {topic}</h1>
 
         <h2>{currentWord.word}</h2>
@@ -53,6 +54,8 @@ export default function LessonDetail() {
             <button className="learning-btn" onClick={goNext}>Next Word</button>
             <button className="learning-btn" onClick={() => navigate(`/practice?word=${currentWord.word}`)}>
             Practice "{currentWord.word}"</button>
+        </div>
+
         </div>
     </div>
   );

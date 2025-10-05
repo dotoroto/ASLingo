@@ -161,8 +161,7 @@ export default function Practice() {
               </Link>
             </div>
 
-
-
+        <div className="content_wrapper">
         <h1>Select a Word to Practice</h1>
         <ul style={{ listStyle: "none", padding: 0 }}>
           {WORDS.map((w) => (
@@ -176,6 +175,7 @@ export default function Practice() {
             </li>
           ))}
         </ul>
+        </div>
       </div>
     );
   }
@@ -194,6 +194,7 @@ export default function Practice() {
               </Link>
             </div>
 
+      <div className="content_wrapper">
       <h1>Practice: {targetWord.word}</h1>
 
       <div style={{ position: "relative", display: "inline-block" }}>
@@ -264,6 +265,7 @@ export default function Practice() {
           <strong>Suggestion:</strong> {suggestion}
         </div>
       )}
+      </div>
     </div>
   );
 }
