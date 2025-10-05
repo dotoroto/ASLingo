@@ -26,3 +26,4 @@ dist-ssr
 .venv/
 test_data/
 __pycache___
+.vercel
