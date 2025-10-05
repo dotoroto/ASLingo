@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import logo from "../assets/logo.png";
+import { Link } from 'react-router-dom';
 
 const LESSONS = {
   greetings: [
@@ -31,10 +32,20 @@ export default function LessonDetail() {
     setCurrentIndex((prev) => (prev + 1) % words.length);
 
   return (
+
     <div className="homepage-wrapper">
-      <img src={logo} alt="ASLingo Logo" className="logo" />
-      <Navbar />
-      <h1>Lesson: {topic}</h1>
+        <img src={logo} alt="ASLingo Logo" className="logo" />
+        <div className="homepage-container">
+            <div className="centered-top-text">
+                <h1>Your Dashboard</h1>
+            </div>
+            <Navbar />
+            <Link to="/" className="link-text">Logout</Link>
+        </div>
+
+        <div className="centered-top-text">
+            <h1>Lesson: {topic}</h1>
+        </div>
 
       <h2>{currentWord.word}</h2>
       <video src={currentWord.videoUrl} controls width={400}></video>

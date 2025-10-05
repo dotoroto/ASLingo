@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import logo from "../assets/logo.png";
+import { Link } from 'react-router-dom';
 
 const BACKEND_PREDICT = "http://localhost:8000/predict";
 const BACKEND_RESET = "http://localhost:8000/reset";
@@ -11,9 +12,7 @@ const BACKEND_RESET = "http://localhost:8000/reset";
 const WORDS = [
   { word: "yes", videoUrl: "/videos/yes.mp4" },
   { word: "you", videoUrl: "/videos/you.mp4" },
-  { word: "hello", videoUrl: "/videos/hello.mp4" },
-  { word: "one", videoUrl: "/videos/one.mp4" },
-  { word: "two", videoUrl: "/videos/two.mp4" },
+  { word: "hello", videoUrl: "/videos/hello.mp4" }
 ];
 
 export default function Practice() {
@@ -176,8 +175,15 @@ export default function Practice() {
   return (
     <div className="homepage-wrapper">
       <img src={logo} alt="ASLingo Logo" className="logo" />
-      <Navbar />
-      <Link to="/" className="link-text">Logout</Link>
+            <div className="homepage-container">
+            <div className="centered-top-text">
+              <h1>Your Dashboard</h1>
+            </div>
+            <Navbar />
+              <Link to="/" className="link-text">
+                Logout
+              </Link>
+            </div>
 
       <h1>Practice: {targetWord.word}</h1>
 
