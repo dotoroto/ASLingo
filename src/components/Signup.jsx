@@ -4,12 +4,15 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import lgbg from "../assets/loginbg.png";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -50,10 +53,10 @@ export default function Signup() {
      >
      <form onSubmit={handleSignup} className="login-form">
        <img src={logo} alt="ASLingo Logo" className="login-logo" />
-       <Link to="/" className="link-text">Back to Home</Link>
+       <Link to="/" className="link-text">{t("signup.back")}</Link>
        <input
           type="name"
-          placeholder="Name"
+          placeholder={t("signup.name")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -61,7 +64,7 @@ export default function Signup() {
        />
        <input
           type="email"
-          placeholder="Email"
+          placeholder={t("signup.email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -70,14 +73,14 @@ export default function Signup() {
  
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t("signup.password")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="login-input"
        />
  
-       <button type="submit" className="login-btn">Sign Up</button>
+       <button type="submit" className="login-btn">{t("signup.title")}</button>
        {error && <p className="login-error">{error}</p>}
      </form>
      </div>

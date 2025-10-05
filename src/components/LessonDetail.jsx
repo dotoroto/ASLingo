@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import logo from "../assets/logo.png";
 import { Link } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
+
 
 const LESSONS = {
   greetings: [
@@ -19,6 +21,7 @@ const LESSONS = {
 };
 
 export default function LessonDetail() {
+  const { t } = useTranslation();
   const { topic } = useParams();
   const words = LESSONS[topic] || [];
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,15 +48,15 @@ export default function LessonDetail() {
 
         <div className="content_wrapper">
 
-        <h1>Lesson: {topic}</h1>
+        <h1>{t("lessonDetail.lesson")}: {topic}</h1>
 
         <h2>{currentWord.word}</h2>
         <video src={currentWord.videoUrl} controls width={400}></video>
 
         <div style={{ marginTop: 20 }}>
-            <button className="learning-btn" onClick={goNext}>Next Word</button>
+            <button className="learning-btn" onClick={goNext}>{t("lessonDetail.nextWord")}</button>
             <button className="learning-btn" onClick={() => navigate(`/practice?word=${currentWord.word}`)}>
-            Practice "{currentWord.word}"</button>
+            {t("lessonDetail.practiceWord")} "{currentWord.word}"</button>
         </div>
 
         </div>

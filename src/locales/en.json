@@ -1,0 +1,91 @@
+{
+  "homepage": {
+    "title": "WANT TO LEARN ASL?",
+    "description": "Jump into <strong>ASLingo</strong>, the gamified way to learn <br />American Sign Language! Get instant feedback, crush mini-games, <br />and level up your skills. <strong>No matter your level, this is your all-in-one ASL platform.</strong>",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "navbar": {
+    "profile": "Profile",
+    "lessons": "Lessons",
+    "practice": "Practice",
+    "challenges": "Challenges"
+  },
+  "dashboard": {
+    "title": "Your Dashboard",
+    "logout": "Logout",
+    "defaultUser": "User",
+    "levelTitle": "Gesture Rookie",
+    "levelLabel": "Level",
+    "xpText": "{{xp}} XP",
+    "xpTillNext": "XP till next level",
+    "leaderboardLink": "View Leaderboard Place"
+  },
+  "practice": {
+    "learningTitle": "Learning:",
+    "selectWord": "Select a Word to Practice",
+    "practice":"Practice: ",
+    "reset": "Reset",
+    "video": "Reference Video",
+    "show": "Show",
+    "hide": "Hide",
+    "predicted": "Predicted",
+    "confidence": "Confidence",
+    "state": "State",
+    "suggestion": "Suggestion"
+  },
+  "lessonDetail": {
+    "lesson": "Lesson",
+    "nextWord": "Next Word",
+    "practiceWord": "Practice"
+  },
+  "lessons": {
+    "lessons": [
+      "Greetings",
+      "Numbers",
+      "Common Phrases",
+      "Family",
+      "Food",
+      "Weather"
+    ],
+    "title": "Lessons",
+    "back": "Back to Dashboard",
+    "selectLesson": "Select a Lesson",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Login",
+    "home": "Back to Home",
+    "errorGeneric": "Login failed",
+    "errorNoUser": "Login succeeded but no user returned"
+  },
+  "signup": {
+    "title": "Sign Up",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign Up",
+    "back": "Back to Home",
+    "errorGeneric": "Signup failed"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "loading": "Loading leaderboard...",
+    "noUsers": "No users yet!",
+    "rank": "Rank",
+    "name": "Name",
+    "xp": "XP",
+    "back": "Back to Dashboard"
+  },
+  "words": {
+    "yes": "Yes",
+    "you": "You",
+    "hello": "Hello",
+    "one": "One",
+    "two": "Two"
+  }
+}
