@@ -31,12 +31,8 @@ export default function Signup() {
       if (res.data.data?.access_token) localStorage.setItem("access_token", res.data.data.access_token);
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
-      navigate("/dashboard");
-<<<<<<< Updated upstream
-=======
       await axios.post("http://localhost:5000/api/signup", { email, password });
       navigate("/login");
->>>>>>> Stashed changes
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Signup failed");
