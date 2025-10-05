@@ -32,7 +32,8 @@
     "predicted": "Prédit",
     "confidence": "Confiance",
     "state": "État",
-    "suggestion": "Suggestion"
+    "suggestion": "Suggestion",
+    "logout":"Déconnexion"
   },
   "lessonDetail": {
     "lesson": "Leçon",

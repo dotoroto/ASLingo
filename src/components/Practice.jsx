@@ -44,23 +44,17 @@ export default function Learning() {
   const TARGET_CONF = 0.8;
 
   // Start webcam with optimal settings
-  useEffect(() => {
+ useEffect(() => {
+    if (!targetWord) return;
+
     const startWebcam = async () => {
-      if (navigator.mediaDevices.getUserMedia) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-              width: { ideal: 1280 },
-              height: { ideal: 720 },
-              facingMode: "user",
-            }
-          });
-          if (webcamRef.current) {
-            webcamRef.current.srcObject = stream;
-          }
-        } catch (err) {
-          console.error("Error accessing webcam:", err);
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (webcamRef.current) {
+          webcamRef.current.srcObject = stream;
         }
+      } catch (err) {
+        console.error("Error accessing webcam:", err);
       }
     };
     startWebcam();
@@ -70,25 +64,27 @@ export default function Learning() {
         webcamRef.current.srcObject.getTracks().forEach((t) => t.stop());
       }
       if (intervalRef.current) window.clearInterval(intervalRef.current);
+      if (abortRef.current) abortRef.current.abort();
     };
-  }, []);
+  }, [targetWord]);
 
-  // Continuous polling - restart when the target word changes
+
+  // Continuous polling
   useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    if (!targetWord) return;
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
 
     captureAndSend();
-    intervalRef.current = window.setInterval(captureAndSend, 250);
+    intervalRef.current = setInterval(captureAndSend, 250);
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = null;
     };
-  }, [currentIndex]);
+  }, [targetWord]);
+
+
 
   const captureAndSend = async () => {
     if (isProcessing) {
@@ -155,32 +151,56 @@ export default function Learning() {
     }
   };
 
-  const goToNextWord = () => {
-    setCurrentIndex((prev) => (prev + 1) % WORDS.length);
-    setConfidence(0);
-    setLabel("—");
-    setState("collecting");
-    setSuggestion("");
-  };
-
   const stateColor =
     state === "predicted" ? "#16a34a" :
     state === "collecting" ? "#ca8a04" :
     state === "no-hand" ? "#4b5563" :
     "#dc2626";
 
+  if (!targetWord) {
+    return (
+      <div className="homepage-wrapper">
+        <img src={logo} alt="ASLingo Logo" className="logo" />
+        <div className="homepage-container">
+          <div className="centered-top-text">
+            <h1>{t("practice.selectWord")}</h1>
+          </div>
+          <Navbar />
+          <Link to="/" className="link-text">{t("practice.logout") || "Logout"}</Link>
+        </div>
+
+        <div className="content_wrapper">
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {translatedWords.map((translated, idx) => (
+              <li key={WORDS_ENG[idx]} style={{ margin: "8px 0" }}>
+                <button
+                  className="learning-btn"
+                  onClick={() => navigate(`/practice?word=${WORDS_ENG[idx]}`)}
+                >
+                  {translated}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
+  // Case 2: word selected → ML practice mode
   return (
-    <div className='homepage-wrapper'>
+    <div className="homepage-wrapper">
       <img src={logo} alt="ASLingo Logo" className="logo" />
       <div className="homepage-container">
         <div className="centered-top-text">
           <h1>Your Dashboard</h1>
         </div>
         <Navbar />
-        <Link to="/" className="link-text">
-          Logout
-        </Link>
-        <h1>Learning: {currentWord.word}</h1>
+        <Link to="/" className="link-text">{t("practice.back") || "Logout"}</Link>
+      </div>
+
+      <div className="content_wrapper">
+        <h1>{t("practice.practice")} {t(`words.${targetWord.word}`)}</h1>
 
         <div style={{ position: "relative", display: "inline-block" }}>
           <video
@@ -192,108 +212,48 @@ export default function Learning() {
             style={{ border: "2px solid black", background: "#000", borderRadius: 12 }}
           ></video>
 
-          {/* Prediction overlay */}
-          <div
-            style={{
-              position: "absolute",
-              left: 12,
-              bottom: 12,
-              background: "rgba(0,0,0,0.75)",
-              color: "#fff",
-              padding: "10px 12px",
-              borderRadius: 10,
-              textAlign: "left",
-              backdropFilter: "blur(4px)",
-            }}
-          >
+          <div style={{
+            position: "absolute", left: 12, bottom: 12,
+            background: "rgba(0,0,0,0.6)", color: "#fff",
+            padding: "8px 10px", borderRadius: 10, textAlign: "left"
+          }}>
             <div style={{ fontSize: 12, opacity: 0.8 }}>Prediction</div>
-            <div style={{ fontSize: 20, fontWeight: 700 }}>
-              {label} <span style={{ opacity: 0.8, fontSize: 16 }}>({(confidence * 100).toFixed(0)}%)</span>
+            <div style={{ fontSize: 18, fontWeight: 700 }}>
+              {label} <span style={{ opacity: 0.8 }}>({confidence.toFixed(2)})</span>
             </div>
           </div>
 
-          {/* State badge */}
-          <div
-            style={{
-              position: "absolute",
-              right: 12,
-              bottom: 12,
-              padding: "6px 10px",
-              color: "#fff",
-              borderRadius: 6,
-              background: stateColor,
-              fontSize: 12,
-              fontWeight: 600,
-              textTransform: "capitalize",
-            }}
-          >
-            {state.replace("-", " ")}
+          <div style={{
+            position: "absolute", right: 12, bottom: 12,
+            padding: "4px 8px", color: "#fff",
+            borderRadius: 6, background: stateColor,
+            fontSize: 12, textTransform: "capitalize"
+          }}>
+            {state}
           </div>
+        </div>
 
-          {/* Tip for no hand detected */}
-          {state === "no-hand" && (
-            <div
-              style={{
-                position: "absolute",
-                top: 12,
-                left: "50%",
-                transform: "translateX(-50%)",
-                background: "rgba(220, 38, 38, 0.9)",
-                color: "#fff",
-                padding: "8px 16px",
-                borderRadius: 8,
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            >
-              💡 Tip: Show your hand clearly with good lighting
-            </div>
-          )}
-
-          {/* Hand placement guide */}
-          {state === "no-hand" && (
-            <div style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "60%",
-              height: "70%",
-              border: "3px dashed rgba(255,255,255,0.5)",
-              borderRadius: "12px",
-              pointerEvents: "none"
-            }}>
-              <div style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                color: "white",
-                fontSize: "18px",
-                textAlign: "center",
-                background: "rgba(0,0,0,0.7)",
-                padding: "12px 20px",
-                borderRadius: "8px"
-              }}>
-                👋 Place your hand here
-              </div>
-            </div>
-          )}
+        <div style={{ marginTop: "10px" }}>
+          <button onClick={resetSequence} className="learning-btn">{t("practice.reset")}</button>
+          <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
+            {showVideo ? t("practice.hide") : t("practice.show")} {t("practice.video")}
+          </button>
         </div>
 
         {showVideo && (
           <div style={{ marginTop: "10px" }}>
-            <video src={currentWord.videoUrl} controls width={300}></video>
+            <video src={targetWord.videoUrl} controls width={300}></video>
           </div>
         )}
 
         <p>
-          Predicted: <strong>{label}</strong> — Confidence: {(confidence * 100).toFixed(1)}% — State: {state}
+          {t("practice.predicted")}: <strong>{label}</strong> — {t("practice.confidence")}:{" "}
+          {(confidence * 100).toFixed(1)}% — {t("practice.state")}: {state}
         </p>
 
         {suggestion && (
           <div style={{ marginTop: "20px", border: "1px solid gray", padding: "10px" }}>
-            <strong>Suggestion:</strong> {suggestion}
+            <strong>{t("practice.practice.suggestion")}:</strong> {suggestion}
           </div>
         )}
       </div>

@@ -4,6 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import User from "../models/User.js";
+import bodyParser from "body-parser";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
@@ -18,6 +20,33 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(bodyParser.json());
+
+const genAI = new GoogleGenerativeAI("AIzaSyBzIhAeIGNhaL-wqm3uDBNqdgdV_Iiy9ss");
+
+
+
+// ---------- Feedback Endpoint ----------
+app.post("/api/feedback", async (req, res) => {
+  const { target, results } = req.body;
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const prompt = `
+  The user attempted the ASL gesture for "${target}".
+  Detected results: ${results}.
+  Give friendly, constructive feedback in 2–3 bullet points on how they can make their gestures look more like ${target} than ${results}.
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const feedback = result.response.text();
+    res.json({ feedback });
+  } catch (err) {
+    console.error("Feedback error:", err);
+    res.status(500).send("Error generating feedback");
+  }
+});
+
 
 /*const DOMAIN = process.env.AUTH0_DOMAIN;
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
