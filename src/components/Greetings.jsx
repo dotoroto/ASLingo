@@ -249,9 +249,9 @@ useEffect(() => {
 
       <div style={{ marginTop: "10px" }}>
         {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
-        <button className='button-btn'>Reset Button</button> {/* NEW */}
-        <button onClick={() => setShowVideo((prev) => !prev)} className='button-btn'>
-          {showVideo ? "Hide" : "Show"} Reference Video
+        <button className="learning-btn">Reset</button>
+        <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
+        {showVideo ? "Hide" : "Show"} Reference Video
         </button>
       </div>
 
