@@ -79,7 +79,7 @@ export default function Learning() {
 
     captureAndSend();
     intervalRef.current = window.setInterval(captureAndSend, 50);
-
+    
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -271,14 +271,6 @@ export default function Learning() {
             💡 Tip: Avoid bright backgrounds or backlighting
           </div>
         )}
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
-        <button className="learning-btn">Reset</button>
-        <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
-        {showVideo ? "Hide" : "Show"} Reference Video
-        </button>
       </div>
 
       {showVideo && (
