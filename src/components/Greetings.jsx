@@ -5,8 +5,7 @@ import Navbar from './Navbar';
 import { Link } from 'react-router-dom';
 import logo from "../assets/logo.png";
 
-const BACKEND_PREDICT = "http://localhost:8000/predict";
-const BACKEND_RESET   = "http://localhost:8000/reset";
+const BACKEND_PREDICT = "https://aslingorecognitionai.onrender.com/predict";
 
 // Example words and reference video URLs
 const WORDS = [
@@ -78,7 +77,7 @@ export default function Learning() {
     }
 
     captureAndSend();
-    intervalRef.current = window.setInterval(captureAndSend, 50);
+    intervalRef.current = window.setInterval(captureAndSend, 150);
 
     return () => {
       if (intervalRef.current) {
@@ -108,8 +107,13 @@ export default function Learning() {
   };
 
   const captureAndSend = async () => {
+    console.log("🎬 Starting capture..."); // ADD THIS
+
     const video = webcamRef.current;
-    if (!video || video.videoWidth === 0) return;
+    if (!video || video.videoWidth === 0) {
+      console.log("❌ No video ready"); // ADD THIS
+      return;
+    }
 
     let canvas = canvasRef.current;
     if (!canvas) {
@@ -136,6 +140,8 @@ export default function Learning() {
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
 
+    console.log("📤 Sending to:", BACKEND_PREDICT); // ADD THIS
+
     try {
       const res = await axios.post(
         BACKEND_PREDICT,
@@ -145,6 +151,8 @@ export default function Learning() {
           timeout: 5000 // Add timeout to prevent hanging
         }
       );
+
+      console.log("Response:", res.data); // ADD THIS
 
       const { label: lbl, confidence: conf, state: st } = res.data;
       setLabel(lbl);
@@ -271,14 +279,6 @@ export default function Learning() {
             💡 Tip: Avoid bright backgrounds or backlighting
           </div>
         )}
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
-        <button className="learning-btn">Reset</button>
-        <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
-        {showVideo ? "Hide" : "Show"} Reference Video
-        </button>
       </div>
 
       {showVideo && (

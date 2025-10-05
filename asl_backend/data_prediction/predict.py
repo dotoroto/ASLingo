@@ -160,11 +160,33 @@ def predict(payload: FramePayload):
 
         landmark_buffer.append(lm)  # append newest frame's landmarks
 
+        label, confidence, state = @app.post("/predict", response_model=PredictResponse)
+def predict(payload: FramePayload):
+    try:
+        print("📥 Received request")  # ADD
+        np_rgb = np_from_base64_jpeg(payload.image)
+        print(f"🖼️ Image shape: {np_rgb.shape}")  # ADD
+
+        lm = extract_landmarks_rgb(np_rgb)
+        print(f"👋 Landmarks: {lm is not None}")  # ADD
+        
+        if lm is None:
+            if len(landmark_buffer) > 0:
+                landmark_buffer.popleft()
+            print("❌ No hand detected")  # ADD
+            return PredictResponse(label="no-hand", confidence=0.0, state="no-hand")
+
+        landmark_buffer.append(lm)
+        print(f"📊 Buffer size: {len(landmark_buffer)}/{SEQ_LEN}")  # ADD
+
         label, confidence, state = predict_from_sequence(landmark_buffer)
+        print(f"✅ Prediction: {label} ({confidence:.2f})")  # ADD
         return PredictResponse(label=label, confidence=confidence, state=state)
 
     except Exception as e:
-        # print(e)  # uncomment while debugging
+        print(f"💥 ERROR: {type(e).__name__}: {e}")  # CHANGE THIS
+        import traceback
+        traceback.print_exc()  # ADD
         return PredictResponse(label="error", confidence=0.0, state="error")
 
 @app.post("/reset")
