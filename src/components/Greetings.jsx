@@ -5,7 +5,8 @@ import Navbar from './Navbar';
 import { Link } from 'react-router-dom';
 import logo from "../assets/logo.png";
 
-const BACKEND_PREDICT = "https://aslingorecognitionai.onrender.com";
+const BACKEND_PREDICT = "http://localhost:8000/predict";
+const BACKEND_RESET   = "http://localhost:8000/reset";
 
 // Example words and reference video URLs
 const WORDS = [
@@ -78,7 +79,7 @@ export default function Learning() {
 
     captureAndSend();
     intervalRef.current = window.setInterval(captureAndSend, 50);
-    
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -173,18 +174,6 @@ export default function Learning() {
     setSuggestion("");
   };
 
-  // (unchanged stub) Gemini suggestion — keep or remove as you like
-  const getGeminiSuggestion = async (predicted, goal) => {
-    try {
-      const res = await axios.post("/gemini-suggest", { predicted, goal });
-      return res.data.suggestion;
-    } catch (err) {
-      console.error("Gemini API error:", err);
-      return "Try adjusting your hand shape and position.";
-    }
-  };
-
-  // NEW: quick helper to reset the server’s sequence buffer (optional)
   const resetSequence = async () => {
     try {
       await axios.post(BACKEND_RESET);
@@ -196,7 +185,6 @@ export default function Learning() {
     }
   };
 
-  // NEW: small color helper for the state badge
   const stateColor =
     state === "predicted" ? "#16a34a" :
     state === "collecting" ? "#ca8a04" :
@@ -283,6 +271,14 @@ export default function Learning() {
             💡 Tip: Avoid bright backgrounds or backlighting
           </div>
         )}
+      </div>
+
+      <div style={{ marginTop: "10px" }}>
+        {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
+        <button className="learning-btn">Reset</button>
+        <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
+        {showVideo ? "Hide" : "Show"} Reference Video
+        </button>
       </div>
 
       {showVideo && (
