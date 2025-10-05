@@ -16,31 +16,39 @@ export default function Learning() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [suggestion, setSuggestion] = useState("");
   const [confidence, setConfidence] = useState(0);
-  // NEW: track live label/state returned by backend
-  const [label, setLabel] = useState("—");                       // NEW
-  const [state, setState] = useState("collecting");              // NEW: "collecting" | "predicted" | "no-hand" | "error"
+  const [label, setLabel] = useState("—");
+  const [state, setState] = useState("collecting");
   const [showVideo, setShowVideo] = useState(false);
 
-  // CHANGED: keep webcam ref; add canvas/interval/abort refs for streaming
   const webcamRef = useRef(null);
-  const canvasRef = useRef(null);                                // NEW: hidden canvas to grab frames
-  const intervalRef = useRef(null);                              // NEW: to clear setInterval
-  const abortRef = useRef(null);                                 // NEW: to cancel in-flight requests
+  const canvasRef = useRef(null);
+  const intervalRef = useRef(null);
+  const abortRef = useRef(null);
 
   const currentWord = WORDS[currentIndex];
   const navigate = useNavigate();
-  const TARGET_CONF = 0.8;                                       // NEW: threshold for advancing
+  const TARGET_CONF = 0.8;
 
   const goToDashboard = () => {
     navigate("/dashboard");
   };
 
-  // Start webcam
+  // Start webcam with optimal settings
   useEffect(() => {
     const startWebcam = async () => {
       if (navigator.mediaDevices.getUserMedia) {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              facingMode: "user",
+              // Request better camera settings
+              brightness: { ideal: 1.0 },
+              contrast: { ideal: 1.0 },
+              saturation: { ideal: 1.0 }
+            }
+          });
           if (webcamRef.current) {
             webcamRef.current.srcObject = stream;
           }
@@ -51,8 +59,7 @@ export default function Learning() {
     };
     startWebcam();
 
-
-   return () => {
+    return () => {
       if (webcamRef.current?.srcObject) {
         webcamRef.current.srcObject.getTracks().forEach((t) => t.stop());
       }
@@ -61,42 +68,54 @@ export default function Learning() {
     };
   }, []);
 
-  
-// continuous polling every 250ms; restart when the target word changes
-useEffect(() => {
-  // ensure no duplicate intervals
-  if (intervalRef.current) {
-    clearInterval(intervalRef.current);
-  }
-
-  // optional: immediate first call
-  captureAndSend();
-
-  intervalRef.current = window.setInterval(captureAndSend, 250);
-
-  return () => {
+  // Continuous polling every 150ms; restart when the target word changes
+  useEffect(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
-      intervalRef.current = null;
     }
+
+    captureAndSend();
+    intervalRef.current = window.setInterval(captureAndSend, 100);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [currentIndex]);
+
+  // Enhanced image preprocessing before sending
+  const preprocessCanvas = (ctx, canvas) => {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // Apply simple contrast enhancement
+    const contrast = 1.2;
+    const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = factor * (data[i] - 128) + 128;       // R
+      data[i + 1] = factor * (data[i + 1] - 128) + 128; // G
+      data[i + 2] = factor * (data[i + 2] - 128) + 128; // B
+      // Alpha channel (i+3) remains unchanged
+    }
+
+    ctx.putImageData(imageData, 0, 0);
   };
-}, [currentIndex]);
 
-
-  // NEW: stream one frame to backend and handle response
   const captureAndSend = async () => {
     const video = webcamRef.current;
     if (!video || video.videoWidth === 0) return;
 
-    // NEW: reuse/create an off-screen canvas
     let canvas = canvasRef.current;
     if (!canvas) {
       canvas = document.createElement("canvas");
       canvasRef.current = canvas;
     }
 
-    // NEW: downscale for bandwidth + speed
-    const w = 320;
+    // Capture at higher resolution for better detection
+    const w = 640; // Increased from 320
     const h = Math.round((video.videoHeight / video.videoWidth) * w);
     canvas.width = w;
     canvas.height = h;
@@ -105,28 +124,30 @@ useEffect(() => {
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, w, h);
 
-    // NEW: encode to JPEG (quality 0.7)
-    const imageData = canvas.toDataURL("image/jpeg", 0.7);
+    // Apply preprocessing to improve detection
+    preprocessCanvas(ctx, canvas);
 
-    // NEW: cancel any in-progress request before sending the next
+    // Encode to JPEG with higher quality for better hand detection
+    const imageData = canvas.toDataURL("image/jpeg", 0.85); // Increased from 0.7
+
     if (abortRef.current) abortRef.current.abort();
     abortRef.current = new AbortController();
 
     try {
-      // CHANGED: hit FastAPI backend on :8000, send ONLY { image }
       const res = await axios.post(
         BACKEND_PREDICT,
         { image: imageData },
-        { signal: abortRef.current.signal }
+        { 
+          signal: abortRef.current.signal,
+          timeout: 5000 // Add timeout to prevent hanging
+        }
       );
 
-      // NEW: backend returns { label, confidence, state }
       const { label: lbl, confidence: conf, state: st } = res.data;
       setLabel(lbl);
       setConfidence(conf);
       setState(st);
 
-      // NEW: advance when model is confident AND label matches target
       if (
         st === "predicted" &&
         conf >= TARGET_CONF &&
@@ -134,37 +155,22 @@ useEffect(() => {
       ) {
         setSuggestion("");
         goToNextWord();
-      } else {
-        // (optional) you could request a hint when low confidence here
-        // const s = await getGeminiSuggestion(lbl, currentWord.word);
-        // setSuggestion(s);
       }
     } catch (err) {
-      // ignore abort errors / transient network issues
+      if (err.name !== 'CanceledError') {
+        console.error("Prediction error:", err);
+      }
     }
   };
 
-  // (unchanged) go to next word, but reset live state too
   const goToNextWord = () => {
     setCurrentIndex((prev) => (prev + 1) % WORDS.length);
     setConfidence(0);
-    setLabel("—");                 // NEW
-    setState("collecting");        // NEW
+    setLabel("—");
+    setState("collecting");
     setSuggestion("");
   };
 
-  // (unchanged stub) Gemini suggestion — keep or remove as you like
-  const getGeminiSuggestion = async (predicted, goal) => {
-    try {
-      const res = await axios.post("/gemini-suggest", { predicted, goal });
-      return res.data.suggestion;
-    } catch (err) {
-      console.error("Gemini API error:", err);
-      return "Try adjusting your hand shape and position.";
-    }
-  };
-
-  // NEW: quick helper to reset the server’s sequence buffer (optional)
   const resetSequence = async () => {
     try {
       await axios.post(BACKEND_RESET);
@@ -176,19 +182,17 @@ useEffect(() => {
     }
   };
 
-  // NEW: small color helper for the state badge
   const stateColor =
-    state === "predicted" ? "#16a34a" :      // green-600
-    state === "collecting" ? "#ca8a04" :     // yellow-600
-    state === "no-hand" ? "#4b5563" :        // gray-600
-    "#dc2626";                                // red-600
+    state === "predicted" ? "#16a34a" :
+    state === "collecting" ? "#ca8a04" :
+    state === "no-hand" ? "#4b5563" :
+    "#dc2626";
 
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <button onClick={goToDashboard}>Dashboard</button>
       <h1>Learning: {currentWord.word}</h1>
 
-      {/* CHANGED: video now has live overlays for prediction + state */}
       <div style={{ position: "relative", display: "inline-block" }}>
         <video
           ref={webcamRef}
@@ -199,64 +203,82 @@ useEffect(() => {
           style={{ border: "2px solid black", background: "#000", borderRadius: 12 }}
         ></video>
 
-        {/* NEW: prediction overlay (label + confidence) */}
+        {/* Prediction overlay */}
         <div
           style={{
             position: "absolute",
             left: 12,
             bottom: 12,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.75)",
             color: "#fff",
-            padding: "8px 10px",
+            padding: "10px 12px",
             borderRadius: 10,
             textAlign: "left",
+            backdropFilter: "blur(4px)",
           }}
         >
           <div style={{ fontSize: 12, opacity: 0.8 }}>Prediction</div>
-          <div style={{ fontSize: 18, fontWeight: 700 }}>
-            {label} <span style={{ opacity: 0.8 }}>({confidence.toFixed(2)})</span>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>
+            {label} <span style={{ opacity: 0.8, fontSize: 16 }}>({(confidence * 100).toFixed(0)}%)</span>
           </div>
         </div>
 
-        {/* NEW: state badge (collecting/predicted/no-hand/error) */}
+        {/* State badge */}
         <div
           style={{
             position: "absolute",
             right: 12,
             bottom: 12,
-            padding: "4px 8px",
+            padding: "6px 10px",
             color: "#fff",
             borderRadius: 6,
             background: stateColor,
             fontSize: 12,
+            fontWeight: 600,
             textTransform: "capitalize",
           }}
         >
-          {state}
+          {state.replace("-", " ")}
         </div>
+
+        {/* Tip for bright backgrounds */}
+        {state === "no-hand" && (
+          <div
+            style={{
+              position: "absolute",
+              top: 12,
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "rgba(220, 38, 38, 0.9)",
+              color: "#fff",
+              padding: "8px 16px",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+            }}
+          >
+            💡 Tip: Avoid bright backgrounds or backlighting
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: "10px" }}>
-        {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
-        <button onClick={resetSequence}>Reset Sequence</button> {/* NEW */}
+        <button onClick={resetSequence}>Reset Sequence</button>
         <button onClick={() => setShowVideo((prev) => !prev)} style={{ marginLeft: "10px" }}>
           {showVideo ? "Hide" : "Show"} Reference Video
         </button>
       </div>
 
-      {/* (unchanged) Reference Video */}
       {showVideo && (
         <div style={{ marginTop: "10px" }}>
           <video src={currentWord.videoUrl} controls width={300}></video>
         </div>
       )}
 
-      {/* CHANGED: expanded readout to include label + state */}
       <p>
         Predicted: <strong>{label}</strong> — Confidence: {(confidence * 100).toFixed(1)}% — State: {state}
       </p>
 
-      {/* (unchanged) Suggestions UI */}
       {suggestion && (
         <div style={{ marginTop: "20px", border: "1px solid gray", padding: "10px" }}>
           <strong>Suggestion:</strong> {suggestion}

@@ -202,7 +202,7 @@ if best_state is not None:
     print(f"\n✅ Restored best model from validation")
 
 # -------- Save checkpoint --------
-class_names = ["Hello", "Yes", "You", "Sorry", "Name"]
+class_names = ["Hello", "Yes", "You", "Sorry", "Name", "Thank You", "Other"]
 torch.save({"state_dict": model.state_dict(), "class_names": class_names}, "models/gesture_lstm.pt")
 joblib.dump(scaler, "models/scaler.pkl")
 print("✅ Saved model and scaler to models/")
