@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import lgbg from "../assets/loginbg.png";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ export default function Login() {
   const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const res = await axios.post("http://localhost:5000/api/login", { email, password });
+    const res = await axios.post("https://aslingo.study/api/login", { email, password });
     console.log("Logged in!", res.data);
 
     if (!res.data.user) {
@@ -45,6 +46,8 @@ export default function Login() {
     >
     <form onSubmit={handleLogin} className="login-form">
       <img src={logo} alt="ASLingo Logo" className="logo-middle" />
+      <Link to="/" className="link-text">Back to Home</Link>
+
       <input
          type="email"
          placeholder="Email"

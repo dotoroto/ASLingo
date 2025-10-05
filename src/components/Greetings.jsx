@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
+import logo from "../assets/logo.png";
 
 const BACKEND_PREDICT = "http://localhost:8000/predict";
 const BACKEND_RESET   = "http://localhost:8000/reset";
@@ -75,7 +78,7 @@ export default function Learning() {
     }
 
     captureAndSend();
-    intervalRef.current = window.setInterval(captureAndSend, 100);
+    intervalRef.current = window.setInterval(captureAndSend, 50);
 
     return () => {
       if (intervalRef.current) {
@@ -189,8 +192,16 @@ export default function Learning() {
     "#dc2626";
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <button onClick={goToDashboard}>Dashboard</button>
+     <div className = 'homepage-wrapper'>
+        <img src={logo} alt="ASLingo Logo" className="logo" />
+          <div className="homepage-container">
+          <div className="centered-top-text">
+            <h1>Your Dashboard</h1>
+          </div>
+      <Navbar />
+      <Link to="/" className="link-text">
+                Logout
+      </Link>
       <h1>Learning: {currentWord.word}</h1>
 
       <div style={{ position: "relative", display: "inline-block" }}>
@@ -263,9 +274,10 @@ export default function Learning() {
       </div>
 
       <div style={{ marginTop: "10px" }}>
-        <button onClick={resetSequence}>Reset Sequence</button>
-        <button onClick={() => setShowVideo((prev) => !prev)} style={{ marginLeft: "10px" }}>
-          {showVideo ? "Hide" : "Show"} Reference Video
+        {/* CHANGED: removed "Check Gesture" button (streaming is continuous) */}
+        <button className="learning-btn">Reset</button>
+        <button onClick={() => setShowVideo((prev) => !prev)} className="learning-btn">
+        {showVideo ? "Hide" : "Show"} Reference Video
         </button>
       </div>
 
@@ -285,5 +297,6 @@ export default function Learning() {
         </div>
       )}
     </div>
+  </div>
   );
 }

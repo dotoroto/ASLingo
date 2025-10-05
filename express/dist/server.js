@@ -3,7 +3,7 @@ import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import User from "./models/User.js";
+import User from "../models/User.js";
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const app = express();
 
 // CORS configuration to allow requests from frontend
 app.use(cors({
-  origin: 'http://localhost:5173', // Your Vite dev server
+  origin: 'https://aslingo.study',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -19,13 +19,13 @@ app.use(cors({
 
 app.use(express.json());
 
-const DOMAIN = process.env.AUTH0_DOMAIN;
+/*const DOMAIN = process.env.AUTH0_DOMAIN;
 const CLIENT_ID = process.env.AUTH0_CLIENT_ID;
 const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
-const CONNECTION = process.env.AUTH0_DB_CONNECTION;
+const CONNECTION = process.env.AUTH0_DB_CONNECTION;*/
 
 // Connect to Mongo
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -38,11 +38,11 @@ app.post("/api/signup", async (req, res) => {
 
   try {
     // Auth0 signup
-    const auth0Res = await axios.post(`https://${DOMAIN}/dbconnections/signup`, {
-      client_id: CLIENT_ID,
+    const auth0Res = await axios.post(`https://dev-0rs44np0zj70rnwz.us.auth0.com/dbconnections/signup`, {
+      client_id: "oSvrqa2TRwe4SBy58IehjFQbHfuMDTEE",
       email,
       password,
-      connection: CONNECTION
+      connection: "Username-Password-Authentication"
     });
 
     // Check if user exists in Mongo
@@ -70,13 +70,13 @@ app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const auth0Res = await axios.post(`https://${DOMAIN}/oauth/token`, {
+    const auth0Res = await axios.post(`https://dev-0rs44np0zj70rnwz.us.auth0.com/oauth/token`, {
       grant_type: "http://auth0.com/oauth/grant-type/password-realm",
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
+      client_id: "oSvrqa2TRwe4SBy58IehjFQbHfuMDTEE",
+      client_secret: "oYH1kmaehD3iszxayzFl-aWBSjXrCG7edGr-dr9CfiQrPzkLQ7SWFIk5UzmNLtoX",
       username: email,
       password,
-      realm: CONNECTION,
+      realm: "Username-Password-Authentication",
       scope: "openid profile email"
     });
 
@@ -92,8 +92,8 @@ app.post("/api/login", async (req, res) => {
     });
   } catch (err) {
     console.error("Login error full:", err.response?.data || err);
-    res.status(err.response?.status || 500)
-       .json(err.response?.data || { error: "Login failed" });
+    res.status(err || 500)
+       .json(err || { error: "Login failed" });
   }
 });
 
@@ -132,4 +132,5 @@ app.post("/user/:email/add-xp", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+export { app };
+//app.listen(5000, () => console.log("Server running on port 5000"));
