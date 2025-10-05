@@ -77,7 +77,7 @@ export default function Learning() {
     }
 
     captureAndSend();
-    intervalRef.current = window.setInterval(captureAndSend, 150);
+    intervalRef.current = window.setInterval(captureAndSend, 300);
 
     return () => {
       if (intervalRef.current) {

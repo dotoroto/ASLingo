@@ -149,20 +149,6 @@ def predict_from_sequence(buf: deque[np.ndarray]) -> Tuple[str, float, str]:
 @app.post("/predict", response_model=PredictResponse)
 def predict(payload: FramePayload):
     try:
-        np_rgb = np_from_base64_jpeg(payload.image)
-
-        lm = extract_landmarks_rgb(np_rgb)
-        if lm is None:
-            # optional: gently decay buffer so small gaps don't wipe history
-            if len(landmark_buffer) > 0:
-                landmark_buffer.popleft()
-            return PredictResponse(label="no-hand", confidence=0.0, state="no-hand")
-
-        landmark_buffer.append(lm)  # append newest frame's landmarks
-
-        label, confidence, state = @app.post("/predict", response_model=PredictResponse)
-def predict(payload: FramePayload):
-    try:
         print("📥 Received request")  # ADD
         np_rgb = np_from_base64_jpeg(payload.image)
         print(f"🖼️ Image shape: {np_rgb.shape}")  # ADD
@@ -188,8 +174,3 @@ def predict(payload: FramePayload):
         import traceback
         traceback.print_exc()  # ADD
         return PredictResponse(label="error", confidence=0.0, state="error")
-
-@app.post("/reset")
-def reset_buffer():
-    landmark_buffer.clear()
-    return {"ok": True, "len": len(landmark_buffer)}
