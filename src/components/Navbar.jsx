@@ -14,7 +14,7 @@ export default function Navbar() {
       </Link>
       <Link 
         to="/lessons" 
-        className={`nav-link ${location.pathname === '/lessons' ? 'active' : ''}`}
+        className={`nav-link ${location.pathname.startsWith('/lessons') ? 'active' : ''}`}
       >
         Lessons
       </Link>
