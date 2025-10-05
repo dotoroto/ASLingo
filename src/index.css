@@ -24,6 +24,15 @@ body {
   margin: 0;
 }
 
+.content_wrapper{
+  display: flex;
+  flex-direction: column; /* stack title, image, buttons vertically */
+  justify-content: center; /* vertical centering */
+  align-items: center;     /* horizontal centering */
+  min-height: 70vh; /* full viewport height */
+  min-width: 100vw;
+}
+
 .logo {
   position: absolute;
   top: 15px;
@@ -419,6 +428,26 @@ body {
   padding: 40px;
   margin-top: 40px;
 }
+
+.learning-btn {
+  background-color: #BACCC4;
+  color: #1a2b3c;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.learning-btn:hover {
+  background-color: #b8c5bf;
+  transform: translateY(-2px);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

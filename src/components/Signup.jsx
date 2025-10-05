@@ -4,28 +4,30 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import lgbg from "../assets/loginbg.png";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("https://aslingo.study/api/signup", {
+        name,
         email,
         password,
-        name
       });
 
       console.log("Signup successful!", res.data);
 
       // Save user info & XP
-      localStorage.setItem("email", res.data.user.email);
       localStorage.setItem("name", res.data.user.name);
+      localStorage.setItem("email", res.data.user.email);
       localStorage.setItem("xp", res.data.user.xp);
 
       // Save tokens if returned
@@ -33,7 +35,6 @@ export default function Signup() {
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
       navigate("/dashboard");
-      navigate("/login");
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Signup failed");
@@ -52,34 +53,34 @@ export default function Signup() {
      >
      <form onSubmit={handleSignup} className="login-form">
        <img src={logo} alt="ASLingo Logo" className="login-logo" />
-       <Link to="/" className="link-text">Back to Home</Link>
+       <Link to="/" className="link-text">{t("signup.back")}</Link>
+       <input
+          type="name"
+          placeholder={t("signup.name")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="login-input"
+       />
        <input
           type="email"
-          placeholder="Email"
+          placeholder={t("signup.email")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           className="login-input"
        />
-       <input
-          type="text"
-          placeholder="Name"
-          value={name}
-           onChange={(e) => setName(e.target.value)}
-          required
-          className="login-input"
-        />
-
+ 
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t("signup.password")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="login-input"
        />
  
-       <button type="submit" className="login-btn">Sign Up</button>
+       <button type="submit" className="login-btn">{t("signup.title")}</button>
        {error && <p className="login-error">{error}</p>}
      </form>
      </div>

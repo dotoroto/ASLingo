@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Leaderboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const goToDashboard = () => {
     navigate("/dashboard");
@@ -18,7 +20,7 @@ export default function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("https://aslingo.study/users");
+        const res = await axios.get("https://aslingo.study/api/users");
         // Sort users by XP descending
         const sortedUsers = res.data.sort((a, b) => b.xp - a.xp);
         setUsers(sortedUsers);
@@ -35,15 +37,15 @@ export default function Leaderboard() {
     fetchLeaderboard();
   }, ["https://aslingo.study"]);
 
-  if (loading) return <p>Loading leaderboard...</p>;
+  if (loading) return <p>{t("leaderboard.loading")}</p>;
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
         <img src={logo} alt="ASLingo Logo" className="logo" />
-        <Link to="/dashboard" className="link-text">Back to Dashboard</Link>
-      <h1>Leaderboard</h1>
+        <Link to="/dashboard" className="link-text">{t("leaderboard.back")}</Link>
+      <h1>{t("leaderboard.title")}</h1>
       {users.length === 0 ? (
-        <p>No users yet!</p>
+        <p>{t("leaderboard.noUsers")}</p>
       ) : (
         <table
           style={{
@@ -55,13 +57,13 @@ export default function Leaderboard() {
           <thead>
             <tr>
               <th style={{ borderBottom: "2px solid #000", padding: "10px" }}>
-                Rank
+                {t("leaderboard.rank")}
               </th>
               <th style={{ borderBottom: "2px solid #000", padding: "10px" }}>
-                Name
+                {t("leaderboard.name")}
               </th>
               <th style={{ borderBottom: "2px solid #000", padding: "10px" }}>
-                XP
+                {t("leaderboard.xp")}
               </th>
             </tr>
           </thead>

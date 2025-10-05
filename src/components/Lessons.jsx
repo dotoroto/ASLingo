@@ -3,13 +3,19 @@ import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar'
+import { useTranslation } from "react-i18next";
 
 export default function Lessons() {
   const navigate = useNavigate();
-  
-  const lessons = [
+  const { t } = useTranslation();
+
+  // Translated lesson names
+  const lessons = t("lessons.lessons", { returnObjects: true });
+
+  // English names for URLs
+  const lessonsEng = [
     "Greetings",
-    "Numbers", 
+    "Numbers",
     "Common Phrases",
     "Family",
     "Food",
@@ -43,30 +49,36 @@ export default function Lessons() {
     <div className="homepage-wrapper">
       <img src={logo} alt="ASLingo Logo" className="logo" />
       <div className="homepage-container">
-      <div className="centered-top-text">
-        <h1>Your Dashboard</h1>
-      </div>
-      <Navbar />
+        <div className="centered-top-text">
+          <h1>{t("lessons.back")}</h1>
+        </div>
+        <Navbar />
         <Link to="/" className="link-text">
-          Logout
+          {t("lessons.logout")}
         </Link>
       </div>
+
       <div className="lesson-cards-container">
-       <div className="nav-arrow" onClick={handlePrevious}>&lt;</div>
-      
+        <div className="nav-arrow" onClick={handlePrevious}>&lt;</div>
+
         <div className="cards-wrapper">
-          {visibleCards.map((lesson, index) => (
-            <div
-              key={`${lesson}-${currentIndex}-${index}`}
-              className={`lesson-card ${isAnimating ? 'slide-in' : ''}`}
-              onClick={() => navigate(`/lessons/${lesson.toLowerCase().replace(/\s+/g, '-')}`)}
-              style={{ cursor: 'pointer' }}
-            >
-              <span>{lesson}</span>
-            </div>
-          ))}
+          {visibleCards.map((lesson, index) => {
+            const lessonIndex = (currentIndex + index) % lessons.length;
+            const lessonUrl = lessonsEng[lessonIndex].toLowerCase().replace(/\s+/g, '-');
+
+            return (
+              <div
+                key={`${lesson}-${currentIndex}-${index}`}
+                className={`lesson-card ${isAnimating ? 'slide-in' : ''}`}
+                onClick={() => navigate(`/lessons/${lessonUrl}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <span>{lesson}</span>
+              </div>
+            );
+          })}
         </div>
-      
+
         <div className="nav-arrow" onClick={handleNext}>&gt;</div>
       </div>
     </div>

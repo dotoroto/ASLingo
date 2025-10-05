@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import lgbg from "../assets/loginbg.png";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+   const { t } = useTranslation();
 
   const handleLogin = async (e) => {
   e.preventDefault();
@@ -46,11 +48,11 @@ export default function Login() {
     >
     <form onSubmit={handleLogin} className="login-form">
       <img src={logo} alt="ASLingo Logo" className="logo-middle" />
-      <Link to="/" className="link-text">Back to Home</Link>
+      <Link to="/" className="link-text">{t("login.home")}</Link>
 
       <input
          type="email"
-         placeholder="Email"
+         placeholder={t("login.email")}
          value={email}
          onChange={(e) => setEmail(e.target.value)}
          required
@@ -59,14 +61,14 @@ export default function Login() {
 
        <input
          type="password"
-         placeholder="Password"
+         placeholder={t("login.password")}
          value={password}
          onChange={(e) => setPassword(e.target.value)}
          required
          className="login-input"
       />
 
-      <button type="submit" className="login-btn">Login</button>
+      <button type="submit" className="login-btn">{t("login.title")}</button>
       {error && <p className="login-error">{error}</p>}
     </form>
     </div>

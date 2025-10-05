@@ -17,10 +17,12 @@
     "express": "^5.1.0",
     "express-jwt": "^8.5.1",
     "framer-motion": "^12.23.22",
+    "i18next": "^25.5.3",
     "jwks-rsa": "^3.2.0",
     "mongoose": "^8.19.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-i18next": "^16.0.0",
     "react-router-dom": "^7.9.3",
     "react-webcam": "^7.2.0"
   },

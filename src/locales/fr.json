@@ -1,0 +1,91 @@
+{
+  "homepage": {
+    "title": "VOUS VOULEZ APPRENDRE L'ASL ?",
+    "description": "Plongez dans <strong>ASLingo</strong>, la manière ludique d'apprendre <br />la langue des signes américaine ! Recevez des retours instantanés, relevez des mini-jeux, <br />et améliorez vos compétences. <strong>Peu importe votre niveau, c'est votre plateforme ASL tout-en-un.</strong>",
+    "login": "Connexion",
+    "signup": "Inscription"
+  },
+  "navbar": {
+    "profile": "Profil",
+    "lessons": "Leçons",
+    "practice": "Pratique",
+    "challenges": "Défis"
+  },
+  "dashboard": {
+    "title": "Votre Tableau de Bord",
+    "logout": "Déconnexion",
+    "defaultUser": "Utilisateur",
+    "levelTitle": "Débutant en Gestes",
+    "levelLabel": "Niveau",
+    "xpText": "{{xp}} XP",
+    "xpTillNext": "XP jusqu'au niveau suivant",
+    "leaderboardLink": "Voir le classement"
+  },
+  "practice": {
+    "learningTitle": "Apprentissage :",
+    "selectWord": "Sélectionnez un mot à pratiquer",
+    "practice": "Pratiquer : ",
+    "reset": "Réinitialiser",
+    "video": "Vidéo de référence",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "predicted": "Prédit",
+    "confidence": "Confiance",
+    "state": "État",
+    "suggestion": "Suggestion"
+  },
+  "lessonDetail": {
+    "lesson": "Leçon",
+    "nextWord": "Mot suivant",
+    "practiceWord": "Pratiquer"
+  },
+  "lessons": {
+    "lessons": [
+      "Salutations",
+      "Nombres",
+      "Phrases Courantes",
+      "Famille",
+      "Nourriture",
+      "Météo"
+    ],
+    "title": "Leçons",
+    "back": "Retour au Tableau de Bord",
+    "selectLesson": "Sélectionnez une leçon",
+    "dashboard": "Tableau de Bord",
+    "logout": "Déconnexion"
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Connexion",
+    "home": "Retour à l'accueil",
+    "errorGeneric": "Échec de la connexion",
+    "errorNoUser": "Connexion réussie mais aucun utilisateur renvoyé"
+  },
+  "signup": {
+    "title": "Inscription",
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Inscription",
+    "back": "Retour à l'accueil",
+    "errorGeneric": "Échec de l'inscription"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "loading": "Chargement du classement...",
+    "noUsers": "Aucun utilisateur pour le moment !",
+    "rank": "Rang",
+    "name": "Nom",
+    "xp": "XP",
+    "back": "Retour au Tableau de Bord"
+  },
+  "words": {
+    "yes": "Oui",
+    "you": "Vous",
+    "hello": "Bonjour",
+    "one": "Un",
+    "two": "Deux"
+  }
+}
