@@ -43,23 +43,17 @@ export default function LessonDetail() {
             <Link to="/" className="link-text">Logout</Link>
         </div>
 
-        <div className="centered-top-text">
-            <h1>Lesson: {topic}</h1>
+        
+        <h1>Lesson: {topic}</h1>
+
+        <h2>{currentWord.word}</h2>
+        <video src={currentWord.videoUrl} controls width={400}></video>
+
+        <div style={{ marginTop: 20 }}>
+            <button className="learning-btn" onClick={goNext}>Next Word</button>
+            <button className="learning-btn" onClick={() => navigate(`/practice?word=${currentWord.word}`)}>
+            Practice "{currentWord.word}"</button>
         </div>
-
-      <h2>{currentWord.word}</h2>
-      <video src={currentWord.videoUrl} controls width={400}></video>
-
-      <div style={{ marginTop: 20 }}>
-        <button onClick={goNext}>Next Word</button>
-        <button
-          onClick={() =>
-            navigate(`/practice?word=${currentWord.word}`)
-          }
-        >
-          Practice "{currentWord.word}"
-        </button>
-      </div>
     </div>
   );
 }

@@ -151,7 +151,18 @@ export default function Practice() {
     return (
       <div className="homepage-wrapper">
         <img src={logo} alt="ASLingo Logo" className="logo" />
-        <Navbar />
+            <div className="homepage-container">
+            <div className="centered-top-text">
+              <h1>Your Dashboard</h1>
+            </div>
+            <Navbar />
+              <Link to="/" className="link-text">
+                Logout
+              </Link>
+            </div>
+
+
+
         <h1>Select a Word to Practice</h1>
         <ul style={{ listStyle: "none", padding: 0 }}>
           {WORDS.map((w) => (
