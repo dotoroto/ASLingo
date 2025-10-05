@@ -9,23 +9,23 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("https://aslingo.study/api/signup", {
+        name,
         email,
         password,
-        name
       });
 
       console.log("Signup successful!", res.data);
 
       // Save user info & XP
-      localStorage.setItem("email", res.data.user.email);
       localStorage.setItem("name", res.data.user.name);
+      localStorage.setItem("email", res.data.user.email);
+
       localStorage.setItem("xp", res.data.user.xp);
 
       // Save tokens if returned
@@ -33,7 +33,6 @@ export default function Signup() {
       if (res.data.data?.id_token) localStorage.setItem("id_token", res.data.data.id_token);
 
       navigate("/dashboard");
-      navigate("/login");
     } catch (err) {
       console.error("Signup failed:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Signup failed");
@@ -54,6 +53,14 @@ export default function Signup() {
        <img src={logo} alt="ASLingo Logo" className="login-logo" />
        <Link to="/" className="link-text">Back to Home</Link>
        <input
+          type="name"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="login-input"
+       />
+       <input
           type="email"
           placeholder="Email"
           value={email}
@@ -61,15 +68,7 @@ export default function Signup() {
           required
           className="login-input"
        />
-       <input
-          type="text"
-          placeholder="Name"
-          value={name}
-           onChange={(e) => setName(e.target.value)}
-          required
-          className="login-input"
-        />
-
+ 
         <input
           type="password"
           placeholder="Password"

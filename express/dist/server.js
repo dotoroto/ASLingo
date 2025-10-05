@@ -25,15 +25,13 @@ const CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
 const CONNECTION = process.env.AUTH0_DB_CONNECTION;*/
 
 // Connect to Mongo
-mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("Mongo connected"))
-.catch(err => console.error("Mongo connection error:", err));
 
 // -------- Signup --------
 app.post("/api/signup", async (req, res) => {
+  await mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   const { email, password, name } = req.body;
 
   try {
@@ -67,6 +65,10 @@ app.post("/api/signup", async (req, res) => {
 
 // -------- Login --------
 app.post("/api/login", async (req, res) => {
+  await mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   const { email, password } = req.body;
 
   try {
@@ -98,7 +100,11 @@ app.post("/api/login", async (req, res) => {
 });
 
 // -------- Get User --------
-app.get("/user/:email", async (req, res) => {
+app.get("/api/user/:email", async (req, res) => {
+  await mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   try {
     const user = await User.findOne({ email: req.params.email });
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -108,14 +114,22 @@ app.get("/user/:email", async (req, res) => {
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/api/users", async (req, res) => {
+  await mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   const users = await User.find();
   res.json(users);
 });
 
 
 // -------- Add XP --------
-app.post("/user/:email/add-xp", async (req, res) => {
+app.post("/api/user/:email/add-xp", async (req, res) => {
+  await mongoose.connect("mongodb+srv://DorothyZheng:thisisasupercoolpassword@cluster0.uivinb5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   const { email } = req.params;
   const { amount } = req.body;
 
