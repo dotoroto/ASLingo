@@ -419,6 +419,26 @@ body {
   padding: 40px;
   margin-top: 40px;
 }
+
+.learning-btn {
+  background-color: #BACCC4;
+  color: #1a2b3c;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.learning-btn:hover {
+  background-color: #b8c5bf;
+  transform: translateY(-2px);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
