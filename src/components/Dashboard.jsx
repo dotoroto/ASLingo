@@ -39,7 +39,7 @@ export default function Dashboard() {
             localStorage.setItem("name", foundUser.name);
           }
         } else {
-          console.warn("User not found in /api/users response");
+          console.warn("User not found in /api/user response");
         }
       } catch (err) {
         console.error("Failed to fetch user:", err.response?.data || err.message);

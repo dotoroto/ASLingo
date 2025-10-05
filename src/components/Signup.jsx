@@ -25,7 +25,6 @@ export default function Signup() {
       // Save user info & XP
       localStorage.setItem("name", res.data.user.name);
       localStorage.setItem("email", res.data.user.email);
-
       localStorage.setItem("xp", res.data.user.xp);
 
       // Save tokens if returned

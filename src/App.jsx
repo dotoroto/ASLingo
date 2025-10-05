@@ -6,7 +6,7 @@ import Signup from "./components/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import Leaderboard from "./components/Leaderboard.jsx";
 import Lessons from "./components/Lessons.jsx";
-import Greetings from "./components/Greetings.jsx";
+import LessonDetail from "./components/LessonDetail.jsx";
 import Practice from "./components/Practice.jsx";
 
 export default function App() {
@@ -18,9 +18,9 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/lessons" element={<Lessons />} />
+         <Route path="/lessons" element={<Lessons />} />
+        <Route path="/lessons/:topic" element={<LessonDetail />} />
         <Route path="/practice" element={<Practice />} />
-        <Route path="/lessons/greetings" element={<Greetings />} />
       </Routes>
     </Router>
   );
