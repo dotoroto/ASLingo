@@ -1,4 +1,4 @@
-# ASLingo: The Smart Learning Platform
+# 👋 [ASLingo: The Smart Learning Platform](https://aslingo.study/)
 
 ![App Screenshot](https://github.com/dotoroto/ASLingo/blob/main/readme_imgs/aslingo_homepage.jpg?raw=true)
 
@@ -6,7 +6,7 @@
 
 
 
-Built by: [Dorothy Zheng](https://github.com/dotoroto), [Edison Cai](https://github.com/EdisonCai2007), [Yaseman Nikoo](https://devpost.com/ynikoo), and [Lily You](https://github.com/slurpingbroccoli)
+Built by: [Dorothy Zheng](https://github.com/dotoroto), [Edison Cai](https://github.com/EdisonCai2007), [Yaseman Nikoo](https://github.com/Yasinik85), and [Lily You](https://github.com/slurpingbroccoli)
 
 > Jump into ASLingo, the gamified way to learn American Sign Language! Get instant feedback, crush mini-games, and level up your skills. No matter your level, this is your all-in-one ASL platform.
 
@@ -60,7 +60,7 @@ We're here to revolutionize how individuals learn ASL. No more looping videos tr
   <img src="https://github.com/dotoroto/ASLingo/blob/main/readme_imgs/aslingo_gesture2.jpg?raw=true" width="45%"/>
 </p>
 
-## 💪 Key Challenges Overcome
+## 💪 Key Challenges
 
 - **🎯 Landmark Stabilization**: Addressed MediaPipe jitter and micro-tremors to provide smooth, noise-free feedback
 - **📊 Model Training**: Acquired and processed large ASL gesture datasets with carefully tuned hyperparameters
