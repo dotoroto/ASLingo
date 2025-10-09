@@ -42,8 +42,10 @@ We're here to revolutionize how individuals learn ASL. No more looping videos tr
 - **Node.js/Express**: API routing, authentication, and session handling
 - **MongoDB**: Storing user profiles, lesson state, and attempt history
 - **Auth0**: Secure authentication and user management
+- **Docker & Render**: Python ML backend hosted on Render's Web Services
+- **Gemini Integration**: Real-time feedback and tips for gesture accuracy
 
-### 🧠 AI Model Service (The Technical Powerhouse)
+### 🧠 Deep Learning AI Model Training
 - **NumPy & TensorFlow**: Data preprocessing and model training
 - **MediaPipe + OpenCV**: 3D hand landmark extraction from webcam
   - 21-point hand skeleton tracking
@@ -52,8 +54,6 @@ We're here to revolutionize how individuals learn ASL. No more looping videos tr
   - Trained from scratch on custom ASL gesture data
   - Optimized hyperparameters (learning rate, batch size) for maximum accuracy
   - Supervised learning with model fitting
-- **Docker & Render**: Python ML backend hosted on Render's Web Services
-- **Gemini Integration**: Real-time feedback and tips for gesture accuracy
 
 <p align="center">
   <img src="https://github.com/dotoroto/ASLingo/blob/main/readme_imgs/aslingo_gesture1.jpg?raw=true" width="45%"/>
